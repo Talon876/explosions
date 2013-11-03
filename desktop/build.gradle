@@ -1,0 +1,35 @@
+apply plugin: "java"
+apply plugin: "application"
+
+sourceCompatibility = 1.7
+mainClassName = "org.nolat.explosions.DesktopLauncher"
+sourceSets.main.resources.srcDirs = [file("./assets").getAbsolutePath()]
+jar.archiveName = appName + '-' + version + '-desktop.jar'
+
+// idea doesn't like relative paths outside of content root...
+tasks.ideaModule.doFirst { 
+	println "huzzs"
+	sourceSets.main.resources.srcDirs = [] 
+}
+
+eclipse.project {
+    name = appName + "-desktop"
+}
+
+run {
+  ignoreExitValue = true
+}
+
+jar {
+    //make jar executable
+    manifest {
+        attributes ('Main-Class': 'org.nolat.explosions.DesktopLauncher',
+                    'Application-Version': version,
+                    'Built-By': System.getProperty("user.name"),
+                    'Built-On': new Date().toString())
+    }
+    //pack dependencies in to jar
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } 
+    }
+}

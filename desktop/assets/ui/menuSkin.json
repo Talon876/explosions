@@ -1,0 +1,43 @@
+{
+    "com.badlogic.gdx.graphics.Color": {
+    	"white" : {"r": 1, "g": 1, "b": 1, "a": 1 },
+    	"black" : {"r": 0, "g": 0, "b": 0, "a": 1 },
+    	"red"   : {"r": 1, "g": 0, "b": 0, "a": 1 },
+    	"green" : {"r": 0, "g": 1, "b": 0, "a": 1 },
+    	"blue"  : {"r": 0, "g": 0, "b": 1, "a": 1 },
+    	"darkGray" : {"r": 0.25, "g": 0.25, "b": 0.25, "a": 1}
+    },
+    "com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle": {
+    	"default": { "fontColor": "white" }
+    },
+    "com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle": {
+    	"default" : {
+    		"up": "button.up",
+    		"down": "button.down",
+    		"overFontColor": "darkGray",
+    		"pressedOffsetX": 0,
+    		"pressedOffsetY": 0,
+    		"fontColor": "blue"
+    	}
+    },
+    "com.badlogic.gdx.scenes.scene2d.ui.List$ListStyle": {
+    	"default" : {
+    		"fontColorUnselected": "blue",
+    		"fontColorSelected": "darkGray",
+    		"selection": "default.selection"
+    	}
+    },
+    "com.badlogic.gdx.scenes.scene2d.ui.ScrollPane$ScrollPaneStyle": {
+    	"default" : {
+    		"hScrollKnob" : "button.up",
+    		"vScrollKnob" : "button.up"
+    	}
+    },
+    "com.badlogic.gdx.scenes.scene2d.ui.Window$WindowStyle": {
+    	"default" : {
+    		"titleFontColor" : "black",
+    		"background": "default.selection"
+    	}
+    }
+
+}

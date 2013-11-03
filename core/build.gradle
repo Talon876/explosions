@@ -1,0 +1,14 @@
+apply plugin: "java"
+
+sourceCompatibility = 1.7
+
+dependencies {
+    compile "com.badlogicgames.gdx:gdx:$gdxVersion"
+    compile "log4j:log4j:1.2.17"
+    compile files('libs/tween-engine-api-6.3.3.jar')
+    compile files('libs/box2dlights.jar')
+}
+
+eclipse.project {
+    name = appName + '-core'
+}

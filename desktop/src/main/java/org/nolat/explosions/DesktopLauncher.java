@@ -1,0 +1,20 @@
+package org.nolat.explosions;
+
+import com.badlogic.gdx.Files.FileType;
+import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
+import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+
+public class DesktopLauncher {
+    public static void main(String[] arg) {
+        LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
+        config.useGL20 = true;
+        config.vSyncEnabled = true;
+        config.title = Config.NAME + " - v" + Config.VERSION;
+        config.width = Config.WIDTH;
+        config.height = Config.HEIGHT;
+        config.fullscreen = false;
+        config.addIcon("icons/icon_16.png", FileType.Internal);
+        config.addIcon("icons/icon_32.png", FileType.Internal);
+        new LwjglApplication(new Explosions(), config);
+    }
+}

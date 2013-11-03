@@ -78,13 +78,13 @@ public class BonusGame implements Screen {
     private String getPowerBar() {
         String powerBar = "Ability: ";
         if (onCooldown) {
-            int bars = (int) ((timer / rechargeTime) * 10f);
+            int bars = (int) ((timer / rechargeTime) * 20f);
             for (int i = 0; i < bars; i++) {
                 powerBar += "|";
             }
             return powerBar;
         }
-        return powerBar + "||||||||||";
+        return powerBar + "||||||||||||||||||||";
     }
 
     private void updateTimer() {
@@ -150,7 +150,7 @@ public class BonusGame implements Screen {
 
     @Override
     public void show() {
-        scoreFont = Config.generateFont("fonts/bauhaus93.ttf", 26, Color.WHITE);
+        scoreFont = Config.generateFont("fonts/square.ttf", 26, Color.WHITE);
         batch = new SpriteBatch();
 
         world = new World(new Vector2(0, -9.81f), true);

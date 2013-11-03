@@ -1,5 +1,7 @@
 package org.nolat.explosions.entities;
 
+import org.nolat.explosions.Config;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
@@ -39,8 +41,7 @@ public class Explosion extends Actor {
         spinSpeedDegrees = 0; // 2 * (MathUtils.randomBoolean() ? 1 : -1);
         speed = 1.8f;
         velocity = new Vector2(1, 1).setAngle(MathUtils.random(360));
-        java.awt.Color tmp = java.awt.Color.getHSBColor(MathUtils.random(), 1f, 1f);
-        setColor(new Color(tmp.getRed() / 255f, tmp.getGreen() / 255f, tmp.getBlue() / 255f, 1));
+        setColor(new Color(Config.HSBtoRGB(MathUtils.random(), 1f, 1f)));
         particleColor = new float[] { getColor().r, getColor().g, getColor().b, getColor().a };
     }
 

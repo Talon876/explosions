@@ -28,4 +28,6 @@ build/
 bin/
 out/
 gen/
+project.properties
 local.properties
+android/

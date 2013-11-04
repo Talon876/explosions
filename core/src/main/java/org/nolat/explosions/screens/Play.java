@@ -31,6 +31,8 @@ public class Play implements Screen {
     private BitmapFont hudFont;
     private BitmapFont barFont;
 
+    private int numDestroyed = 0;
+
     public Play(LevelInfo info) {
         levelInfo = info;
         System.out.println("Level " + (info.level + 1) + ": Explode " + info.numNeededToPass + " out of "
@@ -42,6 +44,7 @@ public class Play implements Screen {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+        hud.update(numDestroyed);
         stage.act(delta);
         stage.draw();
     }
@@ -64,10 +67,10 @@ public class Play implements Screen {
 
             @Override
             public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-                Explosion test = new Explosion(getBounds(), explosionTexture, puffFx, popFx);
-                test.setPosition(screenX, Gdx.graphics.getHeight() - screenY);
-                test.explode();
-                stage.addActor(test);
+                Explosion seed = new Explosion(getBounds(), explosionTexture, puffFx, popFx);
+                seed.setPosition(screenX, Gdx.graphics.getHeight() - screenY);
+                seed.explode();
+                stage.addActor(seed);
                 return false;
             }
 
@@ -100,6 +103,12 @@ public class Play implements Screen {
             float randomX = MathUtils.random(bounds.x + exp.getWidth(), bounds.x + bounds.width - exp.getWidth());
             float randomY = MathUtils.random(bounds.y + exp.getHeight(), bounds.y + bounds.height - exp.getHeight());
             exp.setPosition(randomX, randomY);
+            exp.setDeathAction(new Runnable() {
+                @Override
+                public void run() {
+                    numDestroyed++;
+                }
+            });
             stage.addActor(exp);
         }
 

@@ -17,8 +17,11 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 
 public class Explosion extends Actor {
-    private static final float MIN_SPEED = 1.7f, MAX_SPEED = 2.0f, GROW_SIZE = 160f, //max size to explode to
-            WAIT_TIME = 0.75f; //time in seconds to wait at max size before dying
+    private static final float MIN_SPEED = 1.7f, MAX_SPEED = 2.2f, //random speeds
+            GROW_SIZE = 160f, //max size to explode to
+            GROW_TIME = 0.75f, //time spent growing to max size
+            SHRINK_TIME = 1.1f, //time spent shrinking
+            WAIT_TIME = 0.9f; //time in seconds to wait at max size before dying
 
     private final Rectangle bounds;
     private final TextureRegion texture;
@@ -33,11 +36,14 @@ public class Explosion extends Actor {
 
     private ExplosionState state;
 
+    private Runnable deathAction;
+
     public Explosion(Rectangle bounds, Texture texture, Sound growFx, Sound dieFx) {
         this.bounds = bounds;
         this.texture = new TextureRegion(texture);
         this.growFx = growFx;
         this.dieFx = dieFx;
+        deathAction = new DefaultDeathAction();
 
         confettiTrail = new ParticleEffect();
         confettiTrail.load(Gdx.files.internal("particles/confetti.p"), Gdx.files.internal("images/"));
@@ -62,9 +68,9 @@ public class Explosion extends Actor {
         if (growFx != null) {
             growFx.play();
         }
-        addAction(Actions.sequence(Actions.sizeTo(GROW_SIZE, GROW_SIZE, 0.75f, Interpolation.exp5In),
-                Actions.delay(WAIT_TIME), Actions.sizeTo(0, 0, 0.5f, Interpolation.exp5Out),
-                Actions.run(new Runnable() {
+        addAction(Actions.sequence(Actions.sizeTo(GROW_SIZE, GROW_SIZE, GROW_TIME, Interpolation.exp5In),
+                Actions.delay(WAIT_TIME), Actions.sizeTo(0, 0, SHRINK_TIME, Interpolation.exp5Out),
+                Actions.run(deathAction), Actions.run(new Runnable() {
 
                     @Override
                     public void run() {
@@ -105,6 +111,21 @@ public class Explosion extends Actor {
         }
     }
 
+    private void handleExplosionCollisions() {
+        Actor[] actors = getStage().getRoot().getChildren().begin();
+        for (int i = 0, n = getStage().getRoot().getChildren().size; i < n; i++) {
+            if (actors[i] instanceof Explosion) {
+                Explosion exp = (Explosion) actors[i];
+                if (exp.getState() == ExplosionState.EXPLODING) {
+                    if (isColliding(exp)) {
+                        explode();
+                    }
+                }
+            }
+        }
+        getStage().getRoot().getChildren().end();
+    }
+
     @Override
     public void act(float delta) {
         super.act(delta);
@@ -112,6 +133,7 @@ public class Explosion extends Actor {
         case MOVING:
             setPosition(getX() + velocity.x * speed, getY() + velocity.y * speed);
             handleWallCollisions();
+            handleExplosionCollisions();
             break;
         case EXPLODING:
             break;
@@ -151,5 +173,52 @@ public class Explosion extends Actor {
 
     public enum ExplosionState {
         MOVING, EXPLODING
+    }
+
+    public float getRadius() {
+        return getWidth() / 2; //width and height should always be the same so either could work here
+    }
+
+    public ExplosionState getState() {
+        return state;
+    }
+
+    public void setDeathAction(Runnable deathAction) {
+        this.deathAction = deathAction;
+    }
+
+    /**
+     * Checks if this is colliding with another explosion
+     * 
+     * @param other
+     *            the other explosion
+     * @return true if colliding and one of the explosions is exploding
+     */
+    public boolean isColliding(Explosion other) {
+        boolean colliding = false;
+        if (equals(other)) { //if self, not colliding
+            return false;
+        }
+        if (state == ExplosionState.EXPLODING && other.getState() == ExplosionState.EXPLODING) { //both exploding = not colliding
+            return false;
+        }
+
+        Vector2 posA = new Vector2(getX(), getY());
+        Vector2 posB = new Vector2(other.getX(), other.getY());
+        float distance = posA.dst(posB);
+        if (distance < (getRadius() + other.getRadius())) {
+            colliding = true;
+        }
+
+        //actually only collide if ONE is exploding
+        colliding = colliding && (state == ExplosionState.EXPLODING || other.getState() == ExplosionState.EXPLODING);
+
+        return colliding;
+    }
+
+    private class DefaultDeathAction implements Runnable {
+        @Override
+        public void run() {
+        }
     }
 }

@@ -19,7 +19,6 @@ import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -58,15 +57,16 @@ public class Play implements Screen {
         final Texture explosionTexture = new Texture("images/disc256.png");
         explosionTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 
-        final Sound removeFx = Gdx.audio.newSound(Gdx.files.internal("sfx/pop.ogg"));
+        final Sound popFx = Gdx.audio.newSound(Gdx.files.internal("sfx/pop.ogg"));
+        final Sound puffFx = Gdx.audio.newSound(Gdx.files.internal("sfx/puff.ogg"));
 
         Gdx.input.setInputProcessor(new InputMultiplexer(new InputAdapter() {
 
             @Override
             public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-                Explosion test = new Explosion(getBounds(), explosionTexture);
+                Explosion test = new Explosion(getBounds(), explosionTexture, puffFx, popFx);
                 test.setPosition(screenX, Gdx.graphics.getHeight() - screenY);
-                test.velocity.set(Vector2.Zero);
+                test.explode();
                 stage.addActor(test);
                 return false;
             }
@@ -96,7 +96,7 @@ public class Play implements Screen {
         setupBackground();
         Rectangle bounds = getBounds();
         for (int i = 0; i < levelInfo.numTotal; i++) {
-            Explosion exp = new Explosion(getBounds(), explosionTexture, removeFx);
+            Explosion exp = new Explosion(getBounds(), explosionTexture, puffFx, popFx);
             float randomX = MathUtils.random(bounds.x + exp.getWidth(), bounds.x + bounds.width - exp.getWidth());
             float randomY = MathUtils.random(bounds.y + exp.getHeight(), bounds.y + bounds.height - exp.getHeight());
             exp.setPosition(randomX, randomY);

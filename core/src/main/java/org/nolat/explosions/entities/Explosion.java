@@ -9,17 +9,21 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 
 public class Explosion extends Actor {
-    private static final float MIN_SPEED = 1.7f, MAX_SPEED = 2.0f;
+    private static final float MIN_SPEED = 1.7f, MAX_SPEED = 2.0f, GROW_SIZE = 160f, //max size to explode to
+            WAIT_TIME = 0.75f; //time in seconds to wait at max size before dying
 
     private final Rectangle bounds;
     private final TextureRegion texture;
-    private final Sound removeFx;
+    private final Sound growFx;
+    private final Sound dieFx;
 
     private final ParticleEffect confettiTrail;
     private float[] particleColor;
@@ -27,10 +31,13 @@ public class Explosion extends Actor {
     public final Vector2 velocity;
     private final float speed;
 
-    public Explosion(Rectangle bounds, Texture texture, Sound removeFx) {
+    private ExplosionState state;
+
+    public Explosion(Rectangle bounds, Texture texture, Sound growFx, Sound dieFx) {
         this.bounds = bounds;
         this.texture = new TextureRegion(texture);
-        this.removeFx = removeFx;
+        this.growFx = growFx;
+        this.dieFx = dieFx;
 
         confettiTrail = new ParticleEffect();
         confettiTrail.load(Gdx.files.internal("particles/confetti.p"), Gdx.files.internal("images/"));
@@ -43,13 +50,34 @@ public class Explosion extends Actor {
         setSize(32, 32);
 
         setColor(new Color(Config.HSBtoRGB(MathUtils.random(), 1f, 1f)));
+        state = ExplosionState.MOVING;
     }
 
     public Explosion(Rectangle bounds, Texture texture) {
-        this(bounds, texture, null);
+        this(bounds, texture, null, null);
     }
 
-    private void handleCollisions() {
+    public void explode() {
+        state = ExplosionState.EXPLODING;
+        if (growFx != null) {
+            growFx.play();
+        }
+        addAction(Actions.sequence(Actions.sizeTo(GROW_SIZE, GROW_SIZE, 0.75f, Interpolation.exp5In),
+                Actions.delay(WAIT_TIME), Actions.sizeTo(0, 0, 0.5f, Interpolation.exp5Out),
+                Actions.run(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        if (dieFx != null) {
+                            dieFx.play();
+                        }
+                        Explosion.this.remove();
+                    }
+
+                })));
+    }
+
+    private void handleWallCollisions() {
         //failsafe, if just reversing the velocity failed, just teleport out
         //doing this first gives it a frame to set the position again
         //this can only occur on the title screen
@@ -75,7 +103,33 @@ public class Explosion extends Actor {
         } else if (getY() + getWidth() / 2 > bounds.y + bounds.height) {
             velocity.y *= -1;
         }
+    }
 
+    @Override
+    public void act(float delta) {
+        super.act(delta);
+        switch (state) {
+        case MOVING:
+            setPosition(getX() + velocity.x * speed, getY() + velocity.y * speed);
+            handleWallCollisions();
+            break;
+        case EXPLODING:
+            break;
+        }
+        updateParticles();
+    }
+
+    @Override
+    public void draw(SpriteBatch batch, float parentAlpha) {
+        super.draw(batch, parentAlpha);
+        if (parentAlpha >= .9f) {
+            confettiTrail.draw(batch, Gdx.graphics.getDeltaTime());
+        }
+        getColor().a = parentAlpha;
+        batch.setColor(getColor());
+        batch.draw(texture, getX() - getWidth() / 2, getY() - getHeight() / 2, getOriginX(), getOriginY(), getWidth(),
+                getHeight(), getScaleX(), getScaleY(), getRotation());
+        batch.setColor(Color.WHITE);
     }
 
     @Override
@@ -95,24 +149,7 @@ public class Explosion extends Actor {
         confettiTrail.findEmitter("confetti").getTint().setColors(particleColor);
     }
 
-    @Override
-    public void act(float delta) {
-        super.act(delta);
-        setPosition(getX() + velocity.x * speed, getY() + velocity.y * speed);
-        handleCollisions();
-        updateParticles();
-    }
-
-    @Override
-    public void draw(SpriteBatch batch, float parentAlpha) {
-        super.draw(batch, parentAlpha);
-        if (parentAlpha >= .9f) {
-            confettiTrail.draw(batch, Gdx.graphics.getDeltaTime());
-        }
-        getColor().a = parentAlpha;
-        batch.setColor(getColor());
-        batch.draw(texture, getX() - getWidth() / 2, getY() - getHeight() / 2, getOriginX(), getOriginY(), getWidth(),
-                getHeight(), getScaleX(), getScaleY(), getRotation());
-        batch.setColor(Color.WHITE);
+    public enum ExplosionState {
+        MOVING, EXPLODING
     }
 }

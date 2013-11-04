@@ -30,6 +30,7 @@ public class Play implements Screen {
     private final LevelInfo levelInfo;
     private HUD hud;
     private BitmapFont hudFont;
+    private BitmapFont barFont;
 
     public Play(LevelInfo info) {
         levelInfo = info;
@@ -76,6 +77,9 @@ public class Play implements Screen {
                 case Keys.F10:
                     HUD.showFps = !HUD.showFps;
                     break;
+                case Keys.F12:
+                    advanceToNextLevel();
+                    break;
                 case Keys.ESCAPE:
                     stage.addAction(Actions.sequence(Actions.fadeOut(0.5f), Actions.run(new Runnable() {
                         @Override
@@ -103,7 +107,8 @@ public class Play implements Screen {
 
         //HUD
         hudFont = Config.generateFont("fonts/minecraftia.ttf", 16, Color.BLACK);
-        hud = new HUD(hudFont, levelInfo, bounds, 2f);
+        barFont = Config.generateFont("fonts/quadrats.ttf", 16, Color.BLACK);
+        hud = new HUD(hudFont, barFont, levelInfo, bounds, 2f);
         stage.addActor(hud);
     }
 
@@ -126,6 +131,7 @@ public class Play implements Screen {
     public void dispose() {
         stage.dispose();
         hudFont.dispose();
+        barFont.dispose();
     }
 
     private void setupBackground() {
@@ -141,4 +147,17 @@ public class Play implements Screen {
         return new Rectangle(16, 8, Gdx.graphics.getWidth() - 32, Gdx.graphics.getHeight() - 16);
     }
 
+    private void advanceToNextLevel() {
+        final LevelInfo nextLevel = LevelInfo.getLevelInfo(levelInfo.level + 1);
+        if (nextLevel != null) {
+            stage.addAction(Actions.sequence(Actions.fadeOut(0.5f), Actions.run(new Runnable() {
+                @Override
+                public void run() {
+                    ((Game) Gdx.app.getApplicationListener()).setScreen(new Play(nextLevel));
+                }
+            })));
+        } else {
+            //TODO go to a win screen
+        }
+    }
 }

@@ -45,6 +45,10 @@ public class HUD extends Actor {
         TextBounds txtSize = barFont.getBounds(string);
         drawShadowString(batch, barFont, string, bounds.x + bounds.width - 4 - txtSize.width, bounds.y + bounds.height
                 - 6, Color.GREEN);
+        string = String.format("Destroyed %d", numDestroyed);
+        txtSize = font.getBounds(string);
+        drawShadowString(batch, font, string, bounds.width / 2 - txtSize.width / 2, bounds.y + bounds.height - 6,
+                Color.GREEN);
         if (showFps) {
             drawShadowString(batch, font, Gdx.graphics.getFramesPerSecond() + " FPS", bounds.x + 4, bounds.y + 22,
                     Color.YELLOW);

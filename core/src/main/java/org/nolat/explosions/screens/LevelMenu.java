@@ -2,6 +2,7 @@ package org.nolat.explosions.screens;
 
 import org.nolat.explosions.Config;
 import org.nolat.explosions.LevelInfo;
+import org.nolat.explosions.utils.ShaderUtils;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -70,6 +71,7 @@ public class LevelMenu implements Screen {
 
     @Override
     public void show() {
+        ShaderUtils.init();
         stage = new Stage();
         Gdx.input.setInputProcessor(stage);
         rolloverSfx = Gdx.audio.newSound(Gdx.files.internal("sfx/rollover.ogg"));

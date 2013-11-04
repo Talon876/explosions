@@ -5,7 +5,6 @@ import org.nolat.explosions.InputAdapter;
 import org.nolat.explosions.KonamiInputDetector;
 import org.nolat.explosions.entities.Explosion;
 import org.nolat.explosions.tween.ActorAccessor;
-import org.nolat.explosions.utils.ShaderUtils;
 
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
@@ -70,7 +69,6 @@ public class MainMenu implements Screen {
 
     @Override
     public void show() {
-        ShaderUtils.init();
         stage = new Stage();
         rolloverSfx = Gdx.audio.newSound(Gdx.files.internal("sfx/rollover.ogg"));
         badingSfx = Gdx.audio.newSound(Gdx.files.internal("sfx/bading.ogg"));

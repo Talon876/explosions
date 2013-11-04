@@ -23,9 +23,13 @@ public class ShaderUtils {
     }
 
     public static void startWobbly(SpriteBatch batch, float time, float wobble) {
-        batch.setShader(wobbly);
-        wobbly.setUniformf("time", time);
-        wobbly.setUniformf("wobble", wobble);
+        if (wobbly != null) {
+            batch.setShader(wobbly);
+            wobbly.setUniformf("time", time);
+            wobbly.setUniformf("wobble", wobble);
+        } else {
+            Gdx.app.log("ShaderUtils", "Shader is null, did you call init()?");
+        }
     }
 
     public static void end(SpriteBatch batch) {

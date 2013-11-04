@@ -13,6 +13,7 @@ public class DesktopLauncher {
         config.width = Config.WIDTH;
         config.height = Config.HEIGHT;
         config.fullscreen = false;
+        config.resizable = false;
         config.addIcon("icons/icon_16.png", FileType.Internal);
         config.addIcon("icons/icon_32.png", FileType.Internal);
         new LwjglApplication(new Explosions(), config);

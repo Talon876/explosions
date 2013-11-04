@@ -3,6 +3,7 @@ package org.nolat.explosions.screens;
 import org.nolat.explosions.Config;
 import org.nolat.explosions.InputAdapter;
 import org.nolat.explosions.LevelInfo;
+import org.nolat.explosions.entities.CompletionText;
 import org.nolat.explosions.entities.Explosion;
 import org.nolat.explosions.entities.Explosion.ExplosionState;
 import org.nolat.explosions.entities.HUD;
@@ -32,9 +33,12 @@ public class Play implements Screen {
     private HUD hud;
     private BitmapFont hudFont;
     private BitmapFont barFont;
+    private BitmapFont completionFont;
 
     private int numDestroyed = 0;
     private boolean seedPlaced = false;
+
+    private CompletionText completionText;
 
     public Play(LevelInfo info) {
         levelInfo = info;
@@ -56,15 +60,40 @@ public class Play implements Screen {
     private void checkGameCondition() {
         if (seedPlaced) { //only check once the initial seed has been placed
             if (!isExplosionsHappening()) { //wait until no more explosions
-                if (hasLost()) {
-                    stage.addAction(Actions.sequence(Actions.fadeOut(0.5f), Actions.run(new Runnable() {
-                        @Override
-                        public void run() {
-                            ((Game) Gdx.app.getApplicationListener()).setScreen(new Play(levelInfo));
-                        }
-                    })));
-                } else {
-                    advanceToNextLevel();
+                completionText.setWinning(!hasLost());
+                if (completionText.getActions().size == 0) { //don't re-add actions
+                    //@formatter:off
+                    completionText.addAction(
+                            Actions.sequence(
+                                    Actions.parallel(
+                                            Actions.alpha(1f, 1f),
+                                            Actions.scaleTo(2f, 2f, 1f),
+                                            Actions.rotateBy(720, 1f)
+                                            ),
+                                            Actions.delay(0.5f),
+                                            Actions.parallel(
+                                                    Actions.scaleTo(0f, 0f, 1.5f),
+                                                    Actions.moveBy(0, Gdx.graphics.getHeight() / 2, 1.25f),
+                                                    Actions.fadeOut(1.25f),
+                                                    Actions.run(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            if (hasLost()) {
+                                                                stage.addAction(Actions.sequence(Actions.fadeOut(1.25f), Actions.run(new Runnable() {
+                                                                    @Override
+                                                                    public void run() {
+                                                                        ((Game) Gdx.app.getApplicationListener()).setScreen(new Play(levelInfo));
+                                                                    }
+                                                                })));
+                                                            } else {
+                                                                advanceToNextLevel();
+                                                            }
+                                                        }
+
+                                                    }))
+                                    )
+                            );
+                    //@formatter:on
                 }
             }
         }
@@ -86,7 +115,8 @@ public class Play implements Screen {
     }
 
     private boolean hasLost() {
-        return seedPlaced && numDestroyed < levelInfo.numNeededToPass;
+        boolean lost = seedPlaced && numDestroyed < levelInfo.numNeededToPass;
+        return lost;
     }
 
     @Override
@@ -162,8 +192,15 @@ public class Play implements Screen {
         //HUD
         hudFont = Config.generateFont("fonts/minecraftia.ttf", 16, Color.BLACK);
         barFont = Config.generateFont("fonts/quadrats.ttf", 16, Color.BLACK);
+        completionFont = Config.generateFont("fonts/quadrats.ttf", 42, Color.BLACK);
         hud = new HUD(hudFont, barFont, levelInfo, bounds, 2f);
         stage.addActor(hud);
+
+        //Completion text
+        final Texture winTexture = new Texture("images/win.png"), failTexture = new Texture("images/fail.png");
+        completionText = new CompletionText(winTexture, failTexture);
+        stage.addActor(completionText);
+
     }
 
     @Override
@@ -186,6 +223,7 @@ public class Play implements Screen {
         stage.dispose();
         hudFont.dispose();
         barFont.dispose();
+        completionFont.dispose();
     }
 
     private void setupBackground() {
@@ -204,7 +242,7 @@ public class Play implements Screen {
     private void advanceToNextLevel() {
         final LevelInfo nextLevel = LevelInfo.getLevelInfo(levelInfo.level + 1);
         if (nextLevel != null) {
-            stage.addAction(Actions.sequence(Actions.fadeOut(0.5f), Actions.run(new Runnable() {
+            stage.addAction(Actions.sequence(Actions.fadeOut(1.25f), Actions.run(new Runnable() {
                 @Override
                 public void run() {
                     ((Game) Gdx.app.getApplicationListener()).setScreen(new Play(nextLevel));
@@ -212,7 +250,7 @@ public class Play implements Screen {
             })));
         } else {
             //TODO go to a win screen
-            stage.addAction(Actions.sequence(Actions.fadeOut(0.5f), Actions.run(new Runnable() {
+            stage.addAction(Actions.sequence(Actions.fadeOut(1.25f), Actions.run(new Runnable() {
                 @Override
                 public void run() {
                     ((Game) Gdx.app.getApplicationListener()).setScreen(new MainMenu());

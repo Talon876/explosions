@@ -5,7 +5,6 @@ import org.nolat.explosions.Config;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -15,6 +14,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
 public class Explosion extends Actor {
+    private static final float MIN_SPEED = 1.7f, MAX_SPEED = 2.0f;
 
     private final TextureRegion texture;
     private final Rectangle bounds;
@@ -23,11 +23,10 @@ public class Explosion extends Actor {
     private final float speed;
 
     private final ParticleEffect confettiTrail;
-    private final float[] particleColor;
+    private float[] particleColor;
 
     public Explosion(Rectangle bounds, Texture texture) {
         this.bounds = bounds;
-        texture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
         this.texture = new TextureRegion(texture);
 
         confettiTrail = new ParticleEffect();
@@ -36,19 +35,9 @@ public class Explosion extends Actor {
         confettiTrail.start();
 
         setSize(32, 32);
-        setOrigin(getWidth() / 2, getHeight() / 2);
-        speed = 1.8f;
+        speed = MathUtils.random(MIN_SPEED, MAX_SPEED);
         velocity = new Vector2(1, 1).setAngle(MathUtils.random(360));
         setColor(new Color(Config.HSBtoRGB(MathUtils.random(), 1f, 1f)));
-        particleColor = new float[] { getColor().r, getColor().g, getColor().b, getColor().a };
-    }
-
-    @Override
-    public void act(float delta) {
-        super.act(delta);
-        setPosition(getX() + velocity.x * speed, getY() + velocity.y * speed);
-        handleCollisions();
-        updateParticles();
     }
 
     private void handleCollisions() {
@@ -80,9 +69,29 @@ public class Explosion extends Actor {
 
     }
 
+    @Override
+    public void setSize(float width, float height) {
+        super.setSize(width, height);
+        setOrigin(getWidth() / 2, getHeight() / 2);
+    }
+
+    @Override
+    public void setColor(Color color) {
+        super.setColor(color);
+        particleColor = new float[] { getColor().r, getColor().g, getColor().b, getColor().a };
+    }
+
     private void updateParticles() {
         confettiTrail.setPosition(getX(), getY());
         confettiTrail.findEmitter("confetti").getTint().setColors(particleColor);
+    }
+
+    @Override
+    public void act(float delta) {
+        super.act(delta);
+        setPosition(getX() + velocity.x * speed, getY() + velocity.y * speed);
+        handleCollisions();
+        updateParticles();
     }
 
     @Override

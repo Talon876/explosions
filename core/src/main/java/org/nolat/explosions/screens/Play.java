@@ -15,6 +15,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
@@ -58,10 +59,12 @@ public class Play implements Screen {
         fps = new FPSLogger();
         stage = new Stage();
         final Texture explosionTexture = new Texture("images/disc256.png");
+        explosionTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 
         Gdx.input.setInputProcessor(new InputMultiplexer(new InputAdapter() {
+
             @Override
-            public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+            public boolean touchUp(int screenX, int screenY, int pointer, int button) {
                 Explosion test = new Explosion(getBounds(), explosionTexture);
                 test.setPosition(screenX, Gdx.graphics.getHeight() - screenY);
                 test.velocity.set(Vector2.Zero);

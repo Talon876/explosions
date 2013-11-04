@@ -7,6 +7,9 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 public class DesktopLauncher {
     public static void main(String[] arg) {
         LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
+        if (arg.length > 0) {
+            Config.debug = true;
+        }
         config.useGL20 = true;
         config.vSyncEnabled = true;
         config.title = Config.NAME + " - v" + Config.VERSION;

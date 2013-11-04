@@ -1,5 +1,6 @@
 package org.nolat.explosions.entities;
 
+import org.nolat.explosions.Config;
 import org.nolat.explosions.LevelInfo;
 
 import com.badlogic.gdx.Gdx;
@@ -28,7 +29,9 @@ public class HUD extends Actor {
         this.levelInfo = levelInfo;
         this.bounds = bounds;
         this.shadowSize = shadowSize;
-
+        if (Config.debug) { //show fps by default in debug mode
+            showFps = true;
+        }
     }
 
     public void update(int numDestroyed) {

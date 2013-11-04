@@ -1,5 +1,7 @@
 package org.nolat.explosions.utils;
 
+import org.nolat.explosions.Config;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
@@ -15,10 +17,12 @@ public class ShaderUtils {
     public static void init() {
         wobbly = new ShaderProgram(SIMPLE_PASSTHROUGH_VERT, Gdx.files.internal("shaders/wobbly.frag").readString());
 
-        if (wobbly.isCompiled()) {
-            Gdx.app.log("ShaderUtils", "Wobbly shader compiled successfully!");
-        } else {
-            Gdx.app.log("Shader", wobbly.getLog());
+        if (Config.debug) { //only show shader info in debug mode
+            if (wobbly.isCompiled()) {
+                Gdx.app.log("ShaderUtils", "Wobbly shader compiled successfully!");
+            } else {
+                Gdx.app.log("Shader", wobbly.getLog());
+            }
         }
     }
 

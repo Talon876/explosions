@@ -1,6 +1,7 @@
 package org.nolat.explosions;
 
 import org.nolat.explosions.screens.LevelMenu;
+import org.nolat.explosions.screens.Splash;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -14,9 +15,13 @@ public class Explosions extends Game {
     public void create() {
         backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("music/zapBeat.ogg"));
         backgroundMusic.setLooping(true);
-        setScreen(new LevelMenu(0));
         backgroundMusic.setVolume(0.2f);
-        //        backgroundMusic.play();
+        if (!Config.debug) {
+            backgroundMusic.play();
+            setScreen(new Splash());
+        } else { //if debugging go directly to level menu
+            setScreen(new LevelMenu(0));
+        }
     }
 
     @Override

@@ -42,8 +42,10 @@ public class Play implements Screen {
 
     public Play(LevelInfo info) {
         levelInfo = info;
-        System.out.println("Level " + (info.level + 1) + ": Explode " + info.numNeededToPass + " out of "
-                + info.numTotal);
+        if (Config.debug) {
+            Gdx.app.log("Play", "Level " + (info.level + 1) + ": Explode " + info.numNeededToPass + " out of "
+                    + info.numTotal);
+        }
     }
 
     @Override

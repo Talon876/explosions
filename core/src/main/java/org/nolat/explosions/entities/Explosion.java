@@ -21,7 +21,6 @@ public class Explosion extends Actor {
 
     public final Vector2 velocity;
     private final float speed;
-    private final int spinSpeedDegrees;
 
     private final ParticleEffect confettiTrail;
     private final float[] particleColor;
@@ -38,7 +37,6 @@ public class Explosion extends Actor {
 
         setSize(32, 32);
         setOrigin(getWidth() / 2, getHeight() / 2);
-        spinSpeedDegrees = 0; // 2 * (MathUtils.randomBoolean() ? 1 : -1);
         speed = 1.8f;
         velocity = new Vector2(1, 1).setAngle(MathUtils.random(360));
         setColor(new Color(Config.HSBtoRGB(MathUtils.random(), 1f, 1f)));
@@ -48,13 +46,12 @@ public class Explosion extends Actor {
     @Override
     public void act(float delta) {
         super.act(delta);
-        rotate(spinSpeedDegrees);
         setPosition(getX() + velocity.x * speed, getY() + velocity.y * speed);
-        wallCollision();
-        particles();
+        handleCollisions();
+        updateParticles();
     }
 
-    private void wallCollision() {
+    private void handleCollisions() {
         //failsafe, if just reversing the velocity failed, just teleport out
         //doing this first gives it a frame to set the position again
         //this can only occur on the title screen
@@ -83,7 +80,7 @@ public class Explosion extends Actor {
 
     }
 
-    private void particles() {
+    private void updateParticles() {
         confettiTrail.setPosition(getX(), getY());
         confettiTrail.findEmitter("confetti").getTint().setColors(particleColor);
     }

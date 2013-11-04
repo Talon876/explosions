@@ -61,15 +61,6 @@ public class Play implements Screen {
 
         Gdx.input.setInputProcessor(new InputMultiplexer(new InputAdapter() {
             @Override
-            public boolean touchDragged(int screenX, int screenY, int pointer) {
-                Explosion test = new Explosion(getBounds(), explosionTexture);
-                test.setPosition(screenX, Gdx.graphics.getHeight() - screenY);
-                test.velocity.set(Vector2.Zero);
-                stage.addActor(test);
-                return true;
-            }
-
-            @Override
             public boolean touchDown(int screenX, int screenY, int pointer, int button) {
                 Explosion test = new Explosion(getBounds(), explosionTexture);
                 test.setPosition(screenX, Gdx.graphics.getHeight() - screenY);

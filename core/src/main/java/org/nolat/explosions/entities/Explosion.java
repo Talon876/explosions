@@ -3,6 +3,7 @@ package org.nolat.explosions.entities;
 import org.nolat.explosions.Config;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
@@ -16,28 +17,36 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 public class Explosion extends Actor {
     private static final float MIN_SPEED = 1.7f, MAX_SPEED = 2.0f;
 
-    private final TextureRegion texture;
     private final Rectangle bounds;
-
-    public final Vector2 velocity;
-    private final float speed;
+    private final TextureRegion texture;
+    private final Sound removeFx;
 
     private final ParticleEffect confettiTrail;
     private float[] particleColor;
 
-    public Explosion(Rectangle bounds, Texture texture) {
+    public final Vector2 velocity;
+    private final float speed;
+
+    public Explosion(Rectangle bounds, Texture texture, Sound removeFx) {
         this.bounds = bounds;
         this.texture = new TextureRegion(texture);
+        this.removeFx = removeFx;
 
         confettiTrail = new ParticleEffect();
         confettiTrail.load(Gdx.files.internal("particles/confetti.p"), Gdx.files.internal("images/"));
         confettiTrail.setPosition(getX(), getY());
         confettiTrail.start();
 
-        setSize(32, 32);
-        speed = MathUtils.random(MIN_SPEED, MAX_SPEED);
         velocity = new Vector2(1, 1).setAngle(MathUtils.random(360));
+        speed = MathUtils.random(MIN_SPEED, MAX_SPEED);
+
+        setSize(32, 32);
+
         setColor(new Color(Config.HSBtoRGB(MathUtils.random(), 1f, 1f)));
+    }
+
+    public Explosion(Rectangle bounds, Texture texture) {
+        this(bounds, texture, null);
     }
 
     private void handleCollisions() {

@@ -11,8 +11,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
@@ -30,7 +30,6 @@ public class Play implements Screen {
     private final LevelInfo levelInfo;
     private HUD hud;
     private BitmapFont hudFont;
-    private FPSLogger fps;
 
     public Play(LevelInfo info) {
         levelInfo = info;
@@ -45,8 +44,6 @@ public class Play implements Screen {
 
         stage.act(delta);
         stage.draw();
-        fps.log();
-
     }
 
     @Override
@@ -56,10 +53,11 @@ public class Play implements Screen {
 
     @Override
     public void show() {
-        fps = new FPSLogger();
         stage = new Stage();
         final Texture explosionTexture = new Texture("images/disc256.png");
         explosionTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+
+        final Sound removeFx = Gdx.audio.newSound(Gdx.files.internal("sfx/pop.ogg"));
 
         Gdx.input.setInputProcessor(new InputMultiplexer(new InputAdapter() {
 
@@ -75,6 +73,9 @@ public class Play implements Screen {
             @Override
             public boolean keyDown(int keycode) {
                 switch (keycode) {
+                case Keys.F10:
+                    HUD.showFps = !HUD.showFps;
+                    break;
                 case Keys.ESCAPE:
                     stage.addAction(Actions.sequence(Actions.fadeOut(0.5f), Actions.run(new Runnable() {
                         @Override
@@ -91,7 +92,7 @@ public class Play implements Screen {
         setupBackground();
         Rectangle bounds = getBounds();
         for (int i = 0; i < levelInfo.numTotal; i++) {
-            Explosion exp = new Explosion(getBounds(), explosionTexture);
+            Explosion exp = new Explosion(getBounds(), explosionTexture, removeFx);
             float randomX = MathUtils.random(bounds.x + exp.getWidth(), bounds.x + bounds.width - exp.getWidth());
             float randomY = MathUtils.random(bounds.y + exp.getHeight(), bounds.y + bounds.height - exp.getHeight());
             exp.setPosition(randomX, randomY);
@@ -102,9 +103,8 @@ public class Play implements Screen {
 
         //HUD
         hudFont = Config.generateFont("fonts/minecraftia.ttf", 16, Color.BLACK);
-        hud = new HUD(hudFont, levelInfo, bounds.x + 4, bounds.y + bounds.height - 6, 2f);
+        hud = new HUD(hudFont, levelInfo, bounds, 2f);
         stage.addActor(hud);
-
     }
 
     @Override

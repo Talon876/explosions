@@ -49,7 +49,6 @@ public class HUD extends Actor {
             drawShadowString(batch, font, Gdx.graphics.getFramesPerSecond() + " FPS", bounds.x + 4, bounds.y + 22,
                     Color.YELLOW);
         }
-
     }
 
     private String getDestroyedBar() {

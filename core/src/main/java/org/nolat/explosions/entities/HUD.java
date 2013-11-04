@@ -28,6 +28,7 @@ public class HUD extends Actor {
         this.levelInfo = levelInfo;
         this.bounds = bounds;
         this.shadowSize = shadowSize;
+
     }
 
     public void update(int numDestroyed) {

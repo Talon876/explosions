@@ -140,6 +140,8 @@ public class Play implements Screen {
         }, stage));
 
         setupBackground();
+
+        //set initial explosions
         Rectangle bounds = getBounds();
         for (int i = 0; i < levelInfo.numTotal; i++) {
             Explosion exp = new Explosion(getBounds(), explosionTexture, puffFx, popFx);

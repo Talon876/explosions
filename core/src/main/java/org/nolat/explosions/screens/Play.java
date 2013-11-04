@@ -4,6 +4,7 @@ import org.nolat.explosions.Config;
 import org.nolat.explosions.InputAdapter;
 import org.nolat.explosions.LevelInfo;
 import org.nolat.explosions.entities.Explosion;
+import org.nolat.explosions.entities.Explosion.ExplosionState;
 import org.nolat.explosions.entities.HUD;
 
 import com.badlogic.gdx.Game;
@@ -19,6 +20,7 @@ import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -32,6 +34,7 @@ public class Play implements Screen {
     private BitmapFont barFont;
 
     private int numDestroyed = 0;
+    private boolean seedPlaced = false;
 
     public Play(LevelInfo info) {
         levelInfo = info;
@@ -47,6 +50,43 @@ public class Play implements Screen {
         hud.update(numDestroyed);
         stage.act(delta);
         stage.draw();
+        checkGameCondition();
+    }
+
+    private void checkGameCondition() {
+        if (seedPlaced) { //only check once the initial seed has been placed
+            if (!isExplosionsHappening()) { //wait until no more explosions
+                if (hasLost()) {
+                    stage.addAction(Actions.sequence(Actions.fadeOut(0.5f), Actions.run(new Runnable() {
+                        @Override
+                        public void run() {
+                            ((Game) Gdx.app.getApplicationListener()).setScreen(new Play(levelInfo));
+                        }
+                    })));
+                } else {
+                    advanceToNextLevel();
+                }
+            }
+        }
+    }
+
+    private boolean isExplosionsHappening() {
+        boolean exploding = false;
+        Actor[] actors = stage.getRoot().getChildren().begin();
+        for (int i = 0, n = stage.getRoot().getChildren().size; i < n; i++) {
+            if (actors[i] instanceof Explosion) {
+                Explosion exp = (Explosion) actors[i];
+                if (exp.getState() == ExplosionState.EXPLODING) {
+                    exploding = true;
+                }
+            }
+        }
+        stage.getRoot().getChildren().end();
+        return exploding;
+    }
+
+    private boolean hasLost() {
+        return seedPlaced && numDestroyed < levelInfo.numNeededToPass;
     }
 
     @Override
@@ -67,10 +107,13 @@ public class Play implements Screen {
 
             @Override
             public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-                Explosion seed = new Explosion(getBounds(), explosionTexture, puffFx, popFx);
-                seed.setPosition(screenX, Gdx.graphics.getHeight() - screenY);
-                seed.explode();
-                stage.addActor(seed);
+                if (!seedPlaced) {
+                    Explosion seed = new Explosion(getBounds(), explosionTexture, puffFx, popFx);
+                    seed.setPosition(screenX, Gdx.graphics.getHeight() - screenY);
+                    seed.explode();
+                    stage.addActor(seed);
+                    seedPlaced = true;
+                }
                 return false;
             }
 
@@ -167,6 +210,12 @@ public class Play implements Screen {
             })));
         } else {
             //TODO go to a win screen
+            stage.addAction(Actions.sequence(Actions.fadeOut(0.5f), Actions.run(new Runnable() {
+                @Override
+                public void run() {
+                    ((Game) Gdx.app.getApplicationListener()).setScreen(new MainMenu());
+                }
+            })));
         }
     }
 }

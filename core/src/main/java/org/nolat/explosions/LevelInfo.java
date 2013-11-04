@@ -16,7 +16,7 @@ public class LevelInfo {
         levelData.put(7, new LevelInfo(27, 45));
         levelData.put(8, new LevelInfo(35, 50));
         levelData.put(9, new LevelInfo(43, 55));
-        levelData.put(10, new LevelInfo(52, 60));
+        levelData.put(10, new LevelInfo(50, 60));
         levelData.put(11, new LevelInfo(60, 65));
         //        levelData.put(0, new LevelInfo(1, 5));
         //        levelData.put(1, new LevelInfo(2, 10));

@@ -99,6 +99,5 @@ public class Explosion extends Actor {
         batch.draw(texture, getX() - getWidth() / 2, getY() - getHeight() / 2, getOriginX(), getOriginY(), getWidth(),
                 getHeight(), getScaleX(), getScaleY(), getRotation());
         batch.setColor(Color.WHITE);
-
     }
 }

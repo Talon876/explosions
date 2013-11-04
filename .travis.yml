@@ -5,6 +5,12 @@ jdk:
 before_install:
   - chmod +x gradlew
 
+script:
+  - "./gradlew clean desktop:jar"
+
+after_success:
+  "echo HUGE SUCCESS"
+
 notifications:
   email:
     on_success: [never]

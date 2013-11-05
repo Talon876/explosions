@@ -2,8 +2,8 @@ package org.nolat.explosions.entities;
 
 import java.util.HashMap;
 
-import org.nolat.explosions.Config;
 import org.nolat.explosions.LevelInfo;
+import org.nolat.explosions.utils.ColorUtils;
 import org.nolat.explosions.utils.PagedScrollPane;
 
 import com.badlogic.gdx.graphics.Color;
@@ -98,7 +98,7 @@ public class LevelSelectron extends Group {
             buttonStyle.pressedOffsetX = 1;
             buttonStyle.pressedOffsetY = -1;
 
-            buttonImage.setColor(Config.getRandomHSBColor());
+            buttonImage.setColor(ColorUtils.getRandomHSBColor());
             //assign a name to the actor based on the level it represents
             button.setName(Integer.toString(level));
             button.addListener(new ClickListener() {

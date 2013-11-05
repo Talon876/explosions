@@ -1,6 +1,6 @@
 package org.nolat.explosions.entities;
 
-import org.nolat.explosions.Config;
+import org.nolat.explosions.utils.ColorUtils;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
@@ -55,7 +55,7 @@ public class Explosion extends Actor {
 
         setSize(32, 32);
 
-        setColor(new Color(Config.HSBtoRGB(MathUtils.random(), 1f, 1f)));
+        setColor(new Color(ColorUtils.HSBtoRGB(MathUtils.random(), 1f, 1f)));
         state = ExplosionState.MOVING;
     }
 

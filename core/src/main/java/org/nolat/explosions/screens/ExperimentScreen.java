@@ -2,6 +2,7 @@ package org.nolat.explosions.screens;
 
 import org.nolat.explosions.Config;
 import org.nolat.explosions.LevelInfo;
+import org.nolat.explosions.utils.ColorUtils;
 import org.nolat.explosions.utils.InputAdapter;
 import org.nolat.explosions.utils.PagedScrollPane;
 
@@ -79,7 +80,7 @@ public class ExperimentScreen implements Screen {
 
         // Stack the image and the label at the top of our button
         Image buttonImage = new Image(check);
-        buttonImage.setColor(Config.getRandomHSBColor());
+        buttonImage.setColor(ColorUtils.getRandomHSBColor());
         //        buttonImage.getColor().a = MathUtils.randomBoolean() ? 1f : 0.25f;
         //        if (buttonImage.getColor().a >= 1f) {
         //            button.stack(buttonImage, label).size(64f, 64f);

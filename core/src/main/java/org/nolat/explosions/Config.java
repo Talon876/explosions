@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.math.MathUtils;
 
 public class Config {
     public static final String NAME = "Explosions";
@@ -23,6 +24,10 @@ public class Config {
         font.getRegion().getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
         gen.dispose();
         return font;
+    }
+
+    public static Color getRandomHSBColor() {
+        return new Color(Config.HSBtoRGB(MathUtils.random(), 1f, 1f));
     }
 
     /**
@@ -94,6 +99,6 @@ public class Config {
                 break;
             }
         }
-        return 0x00000000 | (r << 24) | (g << 16) | (b << 8);
+        return 0x000000ff | (r << 24) | (g << 16) | (b << 8);
     }
 }

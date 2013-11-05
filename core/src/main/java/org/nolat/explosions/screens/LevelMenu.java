@@ -2,10 +2,14 @@ package org.nolat.explosions.screens;
 
 import org.nolat.explosions.Config;
 import org.nolat.explosions.LevelInfo;
+import org.nolat.explosions.entities.LevelSelectron;
+import org.nolat.explosions.utils.InputAdapter;
 import org.nolat.explosions.utils.ShaderUtils;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
@@ -19,9 +23,6 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
-import com.badlogic.gdx.scenes.scene2d.ui.List;
-import com.badlogic.gdx.scenes.scene2d.ui.List.ListStyle;
-import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -35,7 +36,7 @@ public class LevelMenu implements Screen {
     private Skin skin;
     private Sound rolloverSfx;
 
-    private BitmapFont listFont;
+    private BitmapFont levelSelectFont;
     private BitmapFont buttonFont;
     private BitmapFont titleFont;
 
@@ -61,7 +62,6 @@ public class LevelMenu implements Screen {
 
         stage.act(delta);
         stage.draw();
-        //        Table.drawDebug(stage);
     }
 
     @Override
@@ -74,7 +74,16 @@ public class LevelMenu implements Screen {
     public void show() {
         ShaderUtils.init();
         stage = new Stage();
-        Gdx.input.setInputProcessor(stage);
+        //handle input processor
+        Gdx.input.setInputProcessor(new InputMultiplexer(stage, new InputAdapter() {
+            @Override
+            public boolean keyUp(int keycode) {
+                if (keycode == Keys.F9 && Config.debug) {
+                    ((Game) Gdx.app.getApplicationListener()).setScreen(new ExperimentScreen());
+                }
+                return false;
+            }
+        }));
         rolloverSfx = Gdx.audio.newSound(Gdx.files.internal("sfx/rollover.ogg"));
 
         Texture backgroundTexture = new Texture("backgrounds/title.png");
@@ -87,10 +96,9 @@ public class LevelMenu implements Screen {
         skin = new Skin(Gdx.files.internal("ui/menuSkin.json"), new TextureAtlas("ui/simpleatlas.atlas"));
 
         table = new Table(skin);
-        table.debug();
         table.setFillParent(true);
 
-        listFont = Config.generateFont("fonts/square.ttf", 36, Color.WHITE);
+        levelSelectFont = Config.generateFont("fonts/square.ttf", 36, Color.WHITE);
         buttonFont = Config.generateFont("fonts/square.ttf", 42, Color.WHITE);
         titleFont = Config.generateFont("fonts/square.ttf", 90, Color.BLACK);
 
@@ -99,13 +107,9 @@ public class LevelMenu implements Screen {
         labelStyle.fontColor = Color.BLACK;
         skin.add("default", labelStyle, LabelStyle.class);
 
-        ListStyle listStyle = skin.get("default", ListStyle.class);
-        listStyle.font = listFont;
-        final List list = new List(getLevelList(), listStyle);
-        list.setSelectedIndex(selected);
-
-        ScrollPane scrollPane = new ScrollPane(list, skin);
-        scrollPane.getStyle().vScrollKnob.setMinWidth(3f);
+        Texture levelButtonTexture = new Texture("images/disc256.png");
+        LevelSelectron levelSelectron = new LevelSelectron(levelSelectFont, levelButtonTexture, skin);
+        levelSelectron.setPosition(100, 600);
 
         TextButtonStyle buttonStyle = skin.get("default", TextButtonStyle.class);
         buttonStyle.font = buttonFont;
@@ -123,8 +127,7 @@ public class LevelMenu implements Screen {
                 stage.addAction(Actions.sequence(Actions.fadeOut(0.5f), Actions.run(new Runnable() {
                     @Override
                     public void run() {
-                        ((Game) Gdx.app.getApplicationListener()).setScreen(new Play(LevelInfo.getLevelInfo(list
-                                .getSelectedIndex())));
+                        ((Game) Gdx.app.getApplicationListener()).setScreen(new Play(LevelInfo.getLevelInfo(0))); //TODO fix
                     }
                 })));
             }
@@ -157,20 +160,12 @@ public class LevelMenu implements Screen {
         table.add("Select Level").colspan(3).expandX().spaceBottom(25).row();
 
         table.add(back).size(210f, 76f).uniformX().bottom().left().padLeft(28).padBottom(20);
-        table.add(scrollPane).uniformX().expandY().padBottom(20);
+        table.add(levelSelectron.getSelectron()).expand().top();
         table.add(play).size(210f, 76f).uniformX().bottom().right().padRight(28).padBottom(20);
 
         stage.addActor(table);
 
         stage.addAction(Actions.sequence(Actions.alpha(0), Actions.fadeIn(0.5f)));
-    }
-
-    private String[] getLevelList() {
-        String[] levels = new String[LevelInfo.getNumberOfLevels()];
-        for (int i = 0; i < levels.length; i++) {
-            levels[i] = "Level " + (i + 1);
-        }
-        return levels;//new String[] { "Experiment", "Level 1" };
     }
 
     @Override
@@ -193,7 +188,7 @@ public class LevelMenu implements Screen {
         stage.dispose();
         skin.dispose();
         rolloverSfx.dispose();
-        listFont.dispose();
+        levelSelectFont.dispose();
         titleFont.dispose();
         buttonFont.dispose();
     }

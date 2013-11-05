@@ -208,7 +208,7 @@ public class MainMenu implements Screen {
 
             @Override
             public boolean keyUp(int keycode) {
-                if (keycode == Keys.F9) {
+                if (keycode == Keys.F9 && Config.debug) {
                     ((Game) Gdx.app.getApplicationListener()).setScreen(new ExperimentScreen());
                 }
 

@@ -1,6 +1,8 @@
 package org.nolat.explosions;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import com.badlogic.gdx.utils.Array;
 
@@ -15,13 +17,21 @@ public class LevelInfo {
             tmp.add(info);
         }
         tmp.reverse();
-        for (int i = 0; i < tmp.size - 1; i++) {
+        for (int i = 0; i < tmp.size; i++) {
             tmp.get(i).setLevel(i);
             levelData.put(i, tmp.get(i));
             if (Config.debug) {
                 System.out.println(tmp.get(i));
             }
         }
+    }
+
+    public static List<LevelInfo> getAllLevels() {
+        List<LevelInfo> list = new ArrayList<>();
+        for (int i = 0; i < levelData.size(); i++) {
+            list.add(levelData.get(i));
+        }
+        return list;
     }
 
     public static LevelInfo generateLevelInfo(int x) {

@@ -8,7 +8,8 @@
     	"darkGray" : {"r": 0.25, "g": 0.25, "b": 0.25, "a": 1}
     },
     "com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle": {
-    	"default": { "fontColor": "white" }
+    	"default": { "fontColor": "white" },
+        "levelButtons": {"fontColor": "black"}
     },
     "com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle": {
     	"default" : {

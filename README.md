@@ -14,8 +14,8 @@ Execute `gradlew eclipse`. The first time this runs it will download Gradle to a
 
 There are two projects:
 
-	* `explosions-core` - contains main game code
-	* `explosions-desktop` - contains assets folder and DesktopLauncher.java with main method for executing in desktop environments.
+* `explosions-core` - contains main game code
+* `explosions-desktop` - contains assets folder and DesktopLauncher.java with main method for executing in desktop environments.
 
 Any art/sound/font/etc assets need to be placed in the assets folder in the explosions-desktop project.
 
@@ -24,10 +24,10 @@ If any changes are made to the dependencies in the build.gradle file, you will h
 Debug Mode
 ----------
 
-	* Disables music
-	* Bypass title/main menu screens
-	* Enable advancing to the next level by pressing F12
-	* FPS counter shown by default (can be toggled with F10)
+* Disables music
+* Bypass title/main menu screens
+* Enable advancing to the next level by pressing F12
+* FPS counter shown by default (can be toggled with F10)
 
 Debug mode can be enabled by passing "debug" as the first program argument in your launch configuration.
 

@@ -15,7 +15,7 @@ public class ShaderUtils {
     private static ShaderProgram wobbly;
 
     public static void init() {
-        if (wobbly != null || Config.debug) {
+        if (wobbly == null || Config.debug) {
             wobbly = new ShaderProgram(SIMPLE_PASSTHROUGH_VERT, Gdx.files.internal("shaders/wobbly.frag").readString());
 
             if (Config.debug) { //only show shader info in debug mode

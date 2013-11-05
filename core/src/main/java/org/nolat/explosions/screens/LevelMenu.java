@@ -61,6 +61,7 @@ public class LevelMenu implements Screen {
 
         stage.act(delta);
         stage.draw();
+        //        Table.drawDebug(stage);
     }
 
     @Override
@@ -86,9 +87,10 @@ public class LevelMenu implements Screen {
         skin = new Skin(Gdx.files.internal("ui/menuSkin.json"), new TextureAtlas("ui/simpleatlas.atlas"));
 
         table = new Table(skin);
+        table.debug();
         table.setFillParent(true);
 
-        listFont = Config.generateFont("fonts/square.ttf", 22, Color.WHITE);
+        listFont = Config.generateFont("fonts/square.ttf", 36, Color.WHITE);
         buttonFont = Config.generateFont("fonts/square.ttf", 42, Color.WHITE);
         titleFont = Config.generateFont("fonts/square.ttf", 90, Color.BLACK);
 
@@ -103,6 +105,7 @@ public class LevelMenu implements Screen {
         list.setSelectedIndex(selected);
 
         ScrollPane scrollPane = new ScrollPane(list, skin);
+        scrollPane.getStyle().vScrollKnob.setMinWidth(3f);
 
         TextButtonStyle buttonStyle = skin.get("default", TextButtonStyle.class);
         buttonStyle.font = buttonFont;
@@ -151,10 +154,10 @@ public class LevelMenu implements Screen {
 
         //putting stuff together
         table.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        table.add("Select Level").colspan(3).expandX().spaceBottom(50).row();
+        table.add("Select Level").colspan(3).expandX().spaceBottom(25).row();
 
         table.add(back).uniformX().bottom().left().padLeft(28).padBottom(20);
-        table.add(scrollPane).uniformX().expandY().padBottom(60);
+        table.add(scrollPane).uniformX().expandY().padBottom(20);
         table.add(play).uniformX().bottom().right().padRight(28).padBottom(20);
 
         stage.addActor(table);

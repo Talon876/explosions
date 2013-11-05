@@ -14,7 +14,7 @@ env:
     - secure: "Vkmja7QFqhCrt1cy9iTRd4lvd86pHYTXGGPCkb7Hr3V9HP0QXN4NG1nU3ByUFgtzNZshWKRSzxBxAHNkniWJLtDBr8Dhn3B0szfeHwndsD5qGdh71ClL6Ko227FABZtqiJsNwM0LSjC2MKHGBC6kwkgrS5dXJAwB3XVIqVHzpAg="
 
 after_success:
-  "ls ./desktop/builds/libs -la && mv ./desktop/builds/libs/*.jar desktop/build/libs/explosions.jar && curl -T desktop/builds/libs/explosions.jar ftp://nolat.org --user $USER:$PASSWORD"
+  "ls ./desktop/build/libs -la && mv ./desktop/build/libs/*.jar desktop/build/libs/explosions.jar && curl -T desktop/build/libs/explosions.jar ftp://nolat.org --user $USER:$PASSWORD"
 
 notifications:
   email:

@@ -10,12 +10,11 @@ script:
 
 env:
   global:
-    - secure: "ddyDyqnA+5mrOuJ2CIwnmYIhn3OZaf4luQStxKwiGrIQOqkYUn8QSCmX1iurKM2H0ZtdWF2mLrUfkkT2qSfEO77/6WBLd8aJbAwNNWIihOugJbRpnxXnJysFZ9p+qQ9rGrZfEdYcjPqglbBc6maPvrqmMU+8hB/w2wGOv4IpZLE="
-    - secure: "BlFb5fDpqZiIwYqF2jnKQ+GIBX0INgPsNNIpXknsuK0MWywt5Rn3a9yiM46bzjYzLrhT3uBag8AaC1Sjdj8/jws4v60f9TG/U0FYiHCwUxozuqFUjlH+MLE83AWx2sOAck43HEWEKb6HUeM/72HQ6jNoWOhdPNYDzIgvJ0GCgHA="
-    - secure: "BQP9yqLI+YjxlKOgAgxOnmHAUS0UY2+8TXalRDBbLjDZYGjrkEMtd4rrsllxPoP2R3OI+DbTcXG1BVNYTx/skCWHLjupzU6nuhEuekTyWhLMLru38TD18w4m6dyfF3FfIYMFkFfZmrOI61i0IL4+dC0YwmqxWwisEiTMC6jz2Yo="
+    - secure: "Me5k0jqemTAbVQIXUeVdTRJkQXUXB9WdaiPO7h/DVRzy1WWYRtKBV22S0oJkgIcAZTHJ2w/2J81A6lB8tqaJk6q6n4jqjl9s1jhSEn3JdJpQ4m0cpp4jPYRuu0Y6/LTwlz2LiMXgUbpizWojY4Jo8A1nbubR5DGkcGx1SFwtdeU="
+    - secure: "Vkmja7QFqhCrt1cy9iTRd4lvd86pHYTXGGPCkb7Hr3V9HP0QXN4NG1nU3ByUFgtzNZshWKRSzxBxAHNkniWJLtDBr8Dhn3B0szfeHwndsD5qGdh71ClL6Ko227FABZtqiJsNwM0LSjC2MKHGBC6kwkgrS5dXJAwB3XVIqVHzpAg="
 
 after_success:
-  "scp -oStrictHostKeyChecking=no desktop/builds/libs/*.jar $USER:$PASSWORD@nolat.org:$DEST/explosions-latest.jar"
+  "mv desktop/builds/libs/*.jar desktop/build/libs/explosions.jar && curl -T desktop/builds/libs/explosions.jar ftp://nolat.org --user $USER:$PASSWORD"
 
 notifications:
   email:

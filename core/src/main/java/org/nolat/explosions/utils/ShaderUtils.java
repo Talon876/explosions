@@ -15,13 +15,15 @@ public class ShaderUtils {
     private static ShaderProgram wobbly;
 
     public static void init() {
-        wobbly = new ShaderProgram(SIMPLE_PASSTHROUGH_VERT, Gdx.files.internal("shaders/wobbly.frag").readString());
+        if (wobbly != null || Config.debug) {
+            wobbly = new ShaderProgram(SIMPLE_PASSTHROUGH_VERT, Gdx.files.internal("shaders/wobbly.frag").readString());
 
-        if (Config.debug) { //only show shader info in debug mode
-            if (wobbly.isCompiled()) {
-                Gdx.app.log("ShaderUtils", "Wobbly shader compiled successfully!");
-            } else {
-                Gdx.app.log("Shader", wobbly.getLog());
+            if (Config.debug) { //only show shader info in debug mode
+                if (wobbly.isCompiled()) {
+                    Gdx.app.log("ShaderUtils", "Wobbly shader compiled successfully!");
+                } else {
+                    Gdx.app.log("Shader", wobbly.getLog());
+                }
             }
         }
     }

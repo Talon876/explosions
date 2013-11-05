@@ -10,12 +10,12 @@ script:
 
 env:
   global:
-    secure: "ddyDyqnA+5mrOuJ2CIwnmYIhn3OZaf4luQStxKwiGrIQOqkYUn8QSCmX1iurKM2H0ZtdWF2mLrUfkkT2qSfEO77/6WBLd8aJbAwNNWIihOugJbRpnxXnJysFZ9p+qQ9rGrZfEdYcjPqglbBc6maPvrqmMU+8hB/w2wGOv4IpZLE="
-    secure: "BlFb5fDpqZiIwYqF2jnKQ+GIBX0INgPsNNIpXknsuK0MWywt5Rn3a9yiM46bzjYzLrhT3uBag8AaC1Sjdj8/jws4v60f9TG/U0FYiHCwUxozuqFUjlH+MLE83AWx2sOAck43HEWEKb6HUeM/72HQ6jNoWOhdPNYDzIgvJ0GCgHA="
-    secure: "BQP9yqLI+YjxlKOgAgxOnmHAUS0UY2+8TXalRDBbLjDZYGjrkEMtd4rrsllxPoP2R3OI+DbTcXG1BVNYTx/skCWHLjupzU6nuhEuekTyWhLMLru38TD18w4m6dyfF3FfIYMFkFfZmrOI61i0IL4+dC0YwmqxWwisEiTMC6jz2Yo="
+    - secure: "ddyDyqnA+5mrOuJ2CIwnmYIhn3OZaf4luQStxKwiGrIQOqkYUn8QSCmX1iurKM2H0ZtdWF2mLrUfkkT2qSfEO77/6WBLd8aJbAwNNWIihOugJbRpnxXnJysFZ9p+qQ9rGrZfEdYcjPqglbBc6maPvrqmMU+8hB/w2wGOv4IpZLE="
+    - secure: "BlFb5fDpqZiIwYqF2jnKQ+GIBX0INgPsNNIpXknsuK0MWywt5Rn3a9yiM46bzjYzLrhT3uBag8AaC1Sjdj8/jws4v60f9TG/U0FYiHCwUxozuqFUjlH+MLE83AWx2sOAck43HEWEKb6HUeM/72HQ6jNoWOhdPNYDzIgvJ0GCgHA="
+    - secure: "BQP9yqLI+YjxlKOgAgxOnmHAUS0UY2+8TXalRDBbLjDZYGjrkEMtd4rrsllxPoP2R3OI+DbTcXG1BVNYTx/skCWHLjupzU6nuhEuekTyWhLMLru38TD18w4m6dyfF3FfIYMFkFfZmrOI61i0IL4+dC0YwmqxWwisEiTMC6jz2Yo="
 
 after_success:
-  "scp desktop/builds/libs/*.jar $USER:$PASSWORD@nolat.org:$DEST/explosions-latest.jar"
+  "scp -oStrictHostKeyChecking=no desktop/builds/libs/*.jar $USER:$PASSWORD@nolat.org:$DEST/explosions-latest.jar"
 
 notifications:
   email:

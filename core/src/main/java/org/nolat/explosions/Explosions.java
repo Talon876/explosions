@@ -13,7 +13,7 @@ public class Explosions extends Game {
 
     @Override
     public void create() {
-        backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("music/zapBeat.ogg"));
+        backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("music/cherryBlossom.ogg"));
         backgroundMusic.setLooping(true);
         backgroundMusic.setVolume(0.2f);
         if (!Config.debug) {

@@ -40,6 +40,7 @@ public class LevelMenu implements Screen {
     private BitmapFont buttonFont;
     private BitmapFont titleFont;
 
+    private LevelSelectron levelSelectron;
     private int selected = 0;
 
     /**
@@ -108,8 +109,13 @@ public class LevelMenu implements Screen {
         skin.add("default", labelStyle, LabelStyle.class);
 
         Texture levelButtonTexture = new Texture("images/disc256.png");
-        LevelSelectron levelSelectron = new LevelSelectron(levelSelectFont, levelButtonTexture, skin);
-        levelSelectron.setPosition(100, 600);
+        levelSelectron = new LevelSelectron(levelSelectFont, levelButtonTexture, skin, new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                //TODO make it so this can be null and/or re-evaluate if it's needed
+            }
+        });
+        levelSelectron.setSelectedLevel(selected);
 
         TextButtonStyle buttonStyle = skin.get("default", TextButtonStyle.class);
         buttonStyle.font = buttonFont;
@@ -127,7 +133,8 @@ public class LevelMenu implements Screen {
                 stage.addAction(Actions.sequence(Actions.fadeOut(0.5f), Actions.run(new Runnable() {
                     @Override
                     public void run() {
-                        ((Game) Gdx.app.getApplicationListener()).setScreen(new Play(LevelInfo.getLevelInfo(0))); //TODO fix
+                        ((Game) Gdx.app.getApplicationListener()).setScreen(new Play(LevelInfo
+                                .getLevelInfo(levelSelectron.getSelectedLevel())));
                     }
                 })));
             }

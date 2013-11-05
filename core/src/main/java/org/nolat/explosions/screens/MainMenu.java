@@ -122,7 +122,6 @@ public class MainMenu implements Screen {
                 })));
             }
         });
-        buttonPlay.pad(3f, 10f, 3f, 10f);
 
         //exit button
         final TextButton buttonExit = new TextButton("Exit", buttonStyle);
@@ -139,7 +138,6 @@ public class MainMenu implements Screen {
                 Gdx.app.exit();
             }
         });
-        buttonExit.pad(3f, 10f, 3f, 10f);
 
         //programmatically add font to labelstyle
         LabelStyle headingStyle = skin.get("default", LabelStyle.class);
@@ -230,9 +228,9 @@ public class MainMenu implements Screen {
         //putting stuff together
         table.add(heading).spaceBottom(150f);
         table.row(); //add new row
-        table.add(buttonPlay).spaceBottom(25f);
+        table.add(buttonPlay).size(210f, 76f).spaceBottom(25f);
         table.row();
-        table.add(buttonExit);
+        table.add(buttonExit).size(210f, 76f);
         table.debug();
         stage.addActor(table);
 
@@ -287,6 +285,8 @@ public class MainMenu implements Screen {
             explosionsGroup.addActor(exp);
         }
 
+        //fade in
+        stage.addAction(Actions.sequence(Actions.alpha(0), Actions.fadeIn(0.5f)));
     }
 
     private Rectangle getBounds() {

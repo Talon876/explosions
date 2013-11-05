@@ -156,9 +156,9 @@ public class LevelMenu implements Screen {
         table.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         table.add("Select Level").colspan(3).expandX().spaceBottom(25).row();
 
-        table.add(back).uniformX().bottom().left().padLeft(28).padBottom(20);
+        table.add(back).size(210f, 76f).uniformX().bottom().left().padLeft(28).padBottom(20);
         table.add(scrollPane).uniformX().expandY().padBottom(20);
-        table.add(play).uniformX().bottom().right().padRight(28).padBottom(20);
+        table.add(play).size(210f, 76f).uniformX().bottom().right().padRight(28).padBottom(20);
 
         stage.addActor(table);
 

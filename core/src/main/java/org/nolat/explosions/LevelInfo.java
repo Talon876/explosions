@@ -15,7 +15,7 @@ public class LevelInfo {
             tmp.add(info);
         }
         tmp.reverse();
-        for (int i = 0; i < tmp.size; i++) {
+        for (int i = 0; i < tmp.size - 1; i++) {
             tmp.get(i).setLevel(i);
             levelData.put(i, tmp.get(i));
             if (Config.debug) {

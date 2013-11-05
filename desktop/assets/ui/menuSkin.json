@@ -37,7 +37,7 @@
     "com.badlogic.gdx.scenes.scene2d.ui.Window$WindowStyle": {
     	"default" : {
     		"titleFontColor" : "black",
-    		"background": "default.selection"
+    		"background": "window.background"
     	}
     }
 

@@ -38,6 +38,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.ui.Window.WindowStyle;
+import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 public class MainMenu implements Screen {
@@ -73,11 +74,10 @@ public class MainMenu implements Screen {
         rolloverSfx = Gdx.audio.newSound(Gdx.files.internal("sfx/rollover.ogg"));
         badingSfx = Gdx.audio.newSound(Gdx.files.internal("sfx/bading.ogg"));
 
+        //setup background
         Texture backgroundTexture = new Texture("backgrounds/title.png");
         Image background = new Image(backgroundTexture);
         background.setPosition(0, 0);
-        background.setPosition(0, 0);
-        background.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         background.setFillParent(true);
         stage.addActor(background);
 
@@ -150,10 +150,13 @@ public class MainMenu implements Screen {
         WindowStyle windowStyle = skin.get("default", WindowStyle.class);
         windowStyle.titleFont = buttonFont;
         final Window bonus = new Window("Bonus Game!", windowStyle);
-        Label infoText = new Label("\n\n--Controls--\n\nWASD - Movement\n\nClick - Boost\n\nScroll - Spin",
-                new LabelStyle(textFont, Color.BLACK));
-        buttonStyle.font = textFont;
-        final TextButton buttonBonus = new TextButton("Let's go!", buttonStyle);
+        LabelStyle bonusLabelStyle = new LabelStyle(textFont, Color.BLACK);
+        Label infoText = new Label("--Controls--\nWASD - Movement\nClick - Boost\nScroll - Spin", bonusLabelStyle);
+        infoText.setAlignment(Align.center);
+        Label descriptionText = new Label("Try to get both\nballs going as fast\nas possible at the\nsame time.",
+                bonusLabelStyle);
+        buttonStyle.font = buttonFont;
+        final TextButton buttonBonus = new TextButton("Start!", buttonStyle);
         buttonBonus.addListener(new ClickListener() {
             @Override
             public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
@@ -164,17 +167,33 @@ public class MainMenu implements Screen {
 
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                ((Game) Gdx.app.getApplicationListener()).setScreen(new BonusGame());
+                //fade to bottom of screen, fade stage, move to bonus game screen
+                bonus.addAction(Actions.sequence(
+                        Actions.parallel(Actions.moveTo(bonus.getX(), 0, 0.5f), Actions.fadeOut(0.5f)),
+                        Actions.run(new Runnable() {
+                            @Override
+                            public void run() {
+                                bonus.setVisible(false); //disables window so it can't be clicked while invisible
+                                stage.addAction(Actions.sequence(Actions.fadeOut(0.5f), Actions.run(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        ((Game) Gdx.app.getApplicationListener()).setScreen(new BonusGame());
+                                    }
+                                })));
+                            }
+
+                        })));
             }
         });
         buttonBonus.pad(3f, 10f, 3f, 10f);
-        bonus.pad(windowStyle.titleFont.getBounds(bonus.getTitle()).height, 10f, 10f, 10f);
-        bonus.add().padBottom(20f).row();
+        bonus.pad(windowStyle.titleFont.getBounds(bonus.getTitle()).height + 10f, 50f, 10f, 50f);
         bonus.add(infoText).center().padBottom(10f).row();
-        bonus.add(buttonBonus).center();
+        bonus.add(descriptionText).center().padBottom(10f).row();
+        bonus.add(buttonBonus).size(210f, 76f).center();
         bonus.setMovable(false);
-        bonus.setSize(stage.getWidth() / 1.5f, stage.getHeight() / 1.5f);
+        bonus.pack();
         bonus.setPosition(stage.getWidth() / 2 - bonus.getWidth() / 2, stage.getHeight() / 2 - bonus.getHeight() / 2);
+        bonus.setColor(Color.CYAN);
         bonus.setVisible(false);
 
         //handle input processor
@@ -213,7 +232,16 @@ public class MainMenu implements Screen {
                 }
 
                 if (keycode == Keys.ESCAPE && bonus.isVisible()) {
-                    bonus.setVisible(false);
+                    //fade out and move to bottom
+                    bonus.addAction(Actions.sequence(
+                            Actions.parallel(Actions.moveTo(bonus.getX(), 0, 0.5f), Actions.fadeOut(0.5f)),
+                            Actions.run(new Runnable() {
+                                @Override
+                                public void run() {
+                                    bonus.setVisible(false); //disables window so it can't be clicked while invisible
+                                }
+
+                            })));
                 }
                 return false;
             }
@@ -222,6 +250,11 @@ public class MainMenu implements Screen {
             public void run() {
                 badingSfx.play();
                 bonus.setVisible(true);
+                //fade in and move from top
+                bonus.addAction(Actions.sequence(Actions.alpha(0f), Actions.moveTo(bonus.getX(),
+                        Gdx.graphics.getHeight()), Actions.parallel(
+                                Actions.moveTo(bonus.getX(), stage.getHeight() / 2 - bonus.getHeight() / 2, 0.5f),
+                                Actions.fadeIn(0.5f))));
             }
         })));
 
@@ -231,9 +264,7 @@ public class MainMenu implements Screen {
         table.add(buttonPlay).size(210f, 76f).spaceBottom(25f);
         table.row();
         table.add(buttonExit).size(210f, 76f);
-        table.debug();
         stage.addActor(table);
-
         stage.addActor(bonus);
 
         //creating animations

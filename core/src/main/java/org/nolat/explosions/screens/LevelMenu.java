@@ -120,12 +120,8 @@ public class LevelMenu implements Screen {
                 stage.addAction(Actions.sequence(Actions.fadeOut(0.5f), Actions.run(new Runnable() {
                     @Override
                     public void run() {
-                        if (list.getSelection().equals("Experiment")) {
-                            ((Game) Gdx.app.getApplicationListener()).setScreen(new PoolExperiment());
-                        } else {
-                            ((Game) Gdx.app.getApplicationListener()).setScreen(new Play(LevelInfo.getLevelInfo(list
-                                    .getSelectedIndex())));
-                        }
+                        ((Game) Gdx.app.getApplicationListener()).setScreen(new Play(LevelInfo.getLevelInfo(list
+                                .getSelectedIndex())));
                     }
                 })));
             }

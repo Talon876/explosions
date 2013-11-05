@@ -1,7 +1,7 @@
 package org.nolat.explosions.screens;
 
 import org.nolat.explosions.Config;
-import org.nolat.explosions.InputAdapter;
+import org.nolat.explosions.utils.InputAdapter;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;

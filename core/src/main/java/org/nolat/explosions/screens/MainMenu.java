@@ -1,10 +1,10 @@
 package org.nolat.explosions.screens;
 
 import org.nolat.explosions.Config;
-import org.nolat.explosions.InputAdapter;
 import org.nolat.explosions.KonamiInputDetector;
 import org.nolat.explosions.entities.Explosion;
 import org.nolat.explosions.tween.ActorAccessor;
+import org.nolat.explosions.utils.InputAdapter;
 
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;

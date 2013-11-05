@@ -1,4 +1,4 @@
-package org.nolat.explosions;
+package org.nolat.explosions.utils;
 
 import com.badlogic.gdx.InputProcessor;
 

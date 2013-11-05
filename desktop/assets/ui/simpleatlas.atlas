@@ -5,7 +5,7 @@ filter: Nearest,Nearest
 repeat: none
 button.down
   rotate: false
-  xy: 0, 10
+  xy: 0, 18
   size: 9, 9
   split: 1, 1, 1, 1
   orig: 9, 9
@@ -13,7 +13,7 @@ button.down
   index: -1
 button.up
   rotate: false
-  xy: 0, 1
+  xy: 0, 9
   size: 9, 9
   split: 1, 1, 1, 1
   orig: 9, 9
@@ -21,14 +21,22 @@ button.up
   index: -1
 default.selection
   rotate: false
-  xy: 0, 0
+  xy: 9, 17
   size: 1, 1
   orig: 1, 1
   offset: 0, 0
   index: -1
 window.background
   rotate: false
-  xy: 9, 10
+  xy: 0, 0
+  size: 9, 9
+  split: 2, 2, 2, 2
+  orig: 9, 9
+  offset: 0, 0
+  index: -1
+window.background.25
+  rotate: false
+  xy: 9, 18
   size: 9, 9
   split: 2, 2, 2, 2
   orig: 9, 9

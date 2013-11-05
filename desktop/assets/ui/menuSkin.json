@@ -31,7 +31,8 @@
     "com.badlogic.gdx.scenes.scene2d.ui.ScrollPane$ScrollPaneStyle": {
     	"default" : {
     		"hScrollKnob" : "button.up",
-    		"vScrollKnob" : "button.up"
+    		"vScrollKnob" : "button.up",
+            "background" : "window.background.25"
     	}
     },
     "com.badlogic.gdx.scenes.scene2d.ui.Window$WindowStyle": {

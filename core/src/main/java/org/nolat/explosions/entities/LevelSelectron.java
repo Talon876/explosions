@@ -55,6 +55,7 @@ public class LevelSelectron extends Group {
         //create paged scroll pane
         PagedScrollPane pagedScrollArea = new PagedScrollPane(skin);
         pagedScrollArea.getStyle().hScrollKnob.setMinHeight(3f);
+        pagedScrollArea.setColor(Color.CYAN);
         pagedScrollArea.setScrollBarPositions(false, true);
         pagedScrollArea.setFlingTime(0.25f);
 
@@ -74,6 +75,7 @@ public class LevelSelectron extends Group {
 
         //add page scroll pane to main table and take up all space
         container.add(pagedScrollArea).expand().fill();
+
     }
 
     private Button getLevelButton(int level) {

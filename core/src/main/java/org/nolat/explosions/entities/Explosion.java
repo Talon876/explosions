@@ -17,11 +17,11 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 
 public class Explosion extends Actor {
-    private static final float MIN_SPEED = 1.6f, MAX_SPEED = 2.15f, //random speeds
+    private static final float MIN_SPEED = 1.65f, MAX_SPEED = 2.25f, //random speeds
             GROW_SIZE = 128f, //max size to explode to
-            GROW_TIME = 1.1f, //time spent growing to max size
-            SHRINK_TIME = 0.75f, //time spent shrinking
-            WAIT_TIME = 1.15f; //time in seconds to wait at max size before dying
+            GROW_TIME = 1.15f, //time spent growing to max size
+            SHRINK_TIME = 0.85f, //time spent shrinking
+            WAIT_TIME = 1.2f; //time in seconds to wait at max size before dying
     private static final int ANGLE_FLUCTUATION = 15; //degrees
 
     private final Rectangle bounds;

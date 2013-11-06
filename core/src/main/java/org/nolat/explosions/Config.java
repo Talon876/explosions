@@ -13,6 +13,7 @@ public class Config {
     public static final int HEIGHT = 720;
     public static boolean debug = false;
 
+
     public static BitmapFont generateFont(String internalPath, int size, Color color) {
         FreeTypeFontGenerator gen = new FreeTypeFontGenerator(Gdx.files.internal(internalPath));
         BitmapFont font = null;

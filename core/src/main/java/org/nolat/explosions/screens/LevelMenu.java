@@ -4,6 +4,7 @@ import org.nolat.explosions.Config;
 import org.nolat.explosions.LevelInfo;
 import org.nolat.explosions.entities.LevelSelectron;
 import org.nolat.explosions.utils.InputAdapter;
+import org.nolat.explosions.utils.SaveData;
 import org.nolat.explosions.utils.ShaderUtils;
 
 import com.badlogic.gdx.Game;
@@ -41,7 +42,7 @@ public class LevelMenu implements Screen {
     private BitmapFont titleFont;
 
     private LevelSelectron levelSelectron;
-    private int selected = 0;
+    private final int selected;
 
     /**
      * 
@@ -53,7 +54,7 @@ public class LevelMenu implements Screen {
     }
 
     public LevelMenu() {
-        this(0);
+        this(SaveData.getLevelsUnlocked());
     }
 
     @Override
@@ -109,7 +110,8 @@ public class LevelMenu implements Screen {
         skin.add("default", labelStyle, LabelStyle.class);
 
         Texture levelButtonTexture = new Texture("images/disc256.png");
-        levelSelectron = new LevelSelectron(levelSelectFont, levelButtonTexture, skin, new ClickListener() {
+        levelSelectron = new LevelSelectron(levelSelectFont, levelButtonTexture, skin, SaveData.getLevelsUnlocked(),
+                new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 //TODO make it so this can be null and/or re-evaluate if it's needed

@@ -7,6 +7,7 @@ import org.nolat.explosions.entities.Explosion;
 import org.nolat.explosions.entities.Explosion.ExplosionState;
 import org.nolat.explosions.entities.HUD;
 import org.nolat.explosions.utils.InputAdapter;
+import org.nolat.explosions.utils.SaveData;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -249,6 +250,8 @@ public class Play implements Screen {
             stage.addAction(Actions.sequence(Actions.fadeOut(1.25f), Actions.run(new Runnable() {
                 @Override
                 public void run() {
+                    //save progress if this is the highest level unlocked
+                    SaveData.saveLevelsUnlocked(nextLevel.level);
                     ((Game) Gdx.app.getApplicationListener()).setScreen(new Play(nextLevel));
                 }
             })));

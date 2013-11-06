@@ -20,7 +20,7 @@ public class Explosions extends Game {
             backgroundMusic.play();
             setScreen(new Splash());
         } else { //if debugging go directly to level menu
-            setScreen(new LevelMenu(0));
+            setScreen(new LevelMenu());
         }
     }
 

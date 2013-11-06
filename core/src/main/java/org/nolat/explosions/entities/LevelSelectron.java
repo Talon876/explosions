@@ -29,10 +29,9 @@ public class LevelSelectron extends Group {
     private final Texture buttonTexture;
     private final Skin skin;
     private final ClickListener buttonListener;
+    private final int levelsUnlocked;
 
     private final Table container;
-
-    private int levelsUnlocked = 0;
 
     private int selectedLevel = 0;
 
@@ -41,10 +40,12 @@ public class LevelSelectron extends Group {
 
     private final PagedScrollPane pagedScrollArea;
 
-    public LevelSelectron(BitmapFont font, Texture buttonTexture, Skin skin, ClickListener buttonListener) {
+    public LevelSelectron(BitmapFont font, Texture buttonTexture, Skin skin, int levelsUnlocked,
+            ClickListener buttonListener) {
         this.font = font;
         this.buttonTexture = buttonTexture;
         this.skin = skin;
+        this.levelsUnlocked = levelsUnlocked;
         this.buttonListener = buttonListener;
 
         //used for mapping ints to Button actors
@@ -52,7 +53,6 @@ public class LevelSelectron extends Group {
 
         //setup main table container
         container = new Table();
-        levelsUnlocked = LevelInfo.getNumberOfLevels() - 1; //TODO correctly track/set this
 
         //create paged scroll pane
         pagedScrollArea = new PagedScrollPane(skin);
@@ -172,4 +172,7 @@ public class LevelSelectron extends Group {
         //TODO scroll to correct page
     }
 
+    public int getLevelsUnlocked() {
+        return levelsUnlocked;
+    }
 }

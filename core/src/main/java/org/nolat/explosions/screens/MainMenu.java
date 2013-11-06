@@ -283,8 +283,8 @@ public class MainMenu implements Screen {
         table.add(heading).expandX().spaceBottom(150f).row();
         table.add(buttonPlay).size(210f, 76f).spaceBottom(25f);
         table.row();
-        table.add(buttonSettings).size(210f, 76f).spaceBottom(25f);
-        table.row();
+        //        table.add(buttonSettings).size(210f, 76f).spaceBottom(25f);
+        //        table.row();
         table.add(buttonExit).size(210f, 76f);
         stage.addActor(table);
         stage.addActor(bonus);

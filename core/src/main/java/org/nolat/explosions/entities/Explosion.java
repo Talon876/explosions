@@ -68,19 +68,21 @@ public class Explosion extends Actor {
         if (growFx != null) {
             growFx.play();
         }
-        addAction(Actions.sequence(Actions.sizeTo(GROW_SIZE, GROW_SIZE, GROW_TIME, Interpolation.exp5In),
-                Actions.delay(WAIT_TIME), Actions.sizeTo(0, 0, SHRINK_TIME, Interpolation.exp5Out),
-                Actions.run(deathAction), Actions.run(new Runnable() {
+        addAction(Actions.sequence(
+                Actions.parallel(Actions.sizeTo(GROW_SIZE, GROW_SIZE, GROW_TIME, Interpolation.exp5In),
+                        Actions.alpha(0.75f, GROW_TIME, Interpolation.exp5In)), Actions.delay(WAIT_TIME),
+                        Actions.sizeTo(0, 0, SHRINK_TIME, Interpolation.exp5Out), Actions.run(deathAction),
+                        Actions.run(new Runnable() {
 
-                    @Override
-                    public void run() {
-                        if (dieFx != null) {
-                            dieFx.play();
-                        }
-                        Explosion.this.remove();
-                    }
+                            @Override
+                            public void run() {
+                                if (dieFx != null) {
+                                    dieFx.play();
+                                }
+                                Explosion.this.remove();
+                            }
 
-                })));
+                        })));
     }
 
     private void handleWallCollisions() {
@@ -147,8 +149,7 @@ public class Explosion extends Actor {
         if (parentAlpha >= .9f) {
             confettiTrail.draw(batch, Gdx.graphics.getDeltaTime());
         }
-        getColor().a = parentAlpha;
-        batch.setColor(getColor());
+        batch.setColor(new Color(getColor().r, getColor().g, getColor().b, getColor().a * parentAlpha));
         batch.draw(texture, getX() - getWidth() / 2, getY() - getHeight() / 2, getOriginX(), getOriginY(), getWidth(),
                 getHeight(), getScaleX(), getScaleY(), getRotation());
         batch.setColor(Color.WHITE);

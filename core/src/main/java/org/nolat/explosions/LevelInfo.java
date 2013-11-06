@@ -59,7 +59,7 @@ public class LevelInfo {
     }
 
     public static LevelInfo generateLevelInfo(int x) {
-        int total = (int) Math.round(10 + 0.95 * x + 1.25 * Math.sin(0.65 * x));
+        int total = (int) Math.round(16 + 0.95 * x + 1.25 * Math.sin(0.65 * x));
         int needed = (int) Math.round(2 + x + Math.cos(0.65 * x));
         return new LevelInfo(needed, total);
     }

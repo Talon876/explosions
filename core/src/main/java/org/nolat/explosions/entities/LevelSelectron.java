@@ -39,6 +39,8 @@ public class LevelSelectron extends Group {
     private Button selectedButton = null;
     private HashMap<Integer, Button> levelButtonMap = null;
 
+    private final PagedScrollPane pagedScrollArea;
+
     public LevelSelectron(BitmapFont font, Texture buttonTexture, Skin skin, ClickListener buttonListener) {
         this.font = font;
         this.buttonTexture = buttonTexture;
@@ -50,18 +52,19 @@ public class LevelSelectron extends Group {
 
         //setup main table container
         container = new Table();
-        levelsUnlocked = LevelInfo.getNumberOfLevels(); //TODO correctly track/set this
+        levelsUnlocked = LevelInfo.getNumberOfLevels() - 1; //TODO correctly track/set this
 
         //create paged scroll pane
-        PagedScrollPane pagedScrollArea = new PagedScrollPane(skin);
+        pagedScrollArea = new PagedScrollPane(skin);
         pagedScrollArea.getStyle().hScrollKnob.setMinHeight(3f);
         pagedScrollArea.setColor(Color.CYAN);
         pagedScrollArea.setScrollBarPositions(false, true);
         pagedScrollArea.setFlingTime(0.25f);
 
         //create level tables with 35 buttons per page arranged in 5 rows and 7 cols
+        // there must be at least 7 buttons on a page for page scrolling to work correctly
         Table levelPage = null;
-        for (int i = 0; i < LevelInfo.getNumberOfLevels(); i++) {
+        for (int i = 0; i < getButtonAmount(); i++) {
             if (i % 35 == 0) {
                 levelPage = new Table().pad(0f);
                 levelPage.defaults().pad(15f, 25f, 15f, 25f);
@@ -72,10 +75,29 @@ public class LevelSelectron extends Group {
             }
             levelPage.add(getLevelButton((i)));
         }
-
         //add page scroll pane to main table and take up all space
         container.add(pagedScrollArea).expand().fill();
+    }
 
+    /**
+     * Increases amount of buttons until there is mod 7 of them so page scrolling works correctly
+     * 
+     * @return
+     */
+    private int getButtonAmount() {
+        int numLevels = LevelInfo.getNumberOfLevels();
+        while (numLevels % 7 != 0) {
+            numLevels++;
+        }
+        return numLevels;
+    }
+
+    private int getPageFromLevel(int level) {
+        return level / 35; //int division to find which page the level is on
+    }
+
+    public void setPage(int page) {
+        pagedScrollArea.setPage(page);
     }
 
     private Button getLevelButton(int level) {
@@ -110,8 +132,10 @@ public class LevelSelectron extends Group {
                 }
             });
             button.addListener(buttonListener);
-        } else {
-            buttonImage.setColor(new Color(0.75f, 0.75f, 0.75f, 1));
+        } else if (level <= LevelInfo.getNumberOfLevels() - 1) {
+            buttonImage.setColor(new Color(0.75f, 0.75f, 0.75f, 1)); //existing levels, but are locked
+        } else { //levels that don't exist that are used for keeping the layout, make them invisible
+            button.getColor().a = 0f;
         }
         return button;
     }
@@ -135,6 +159,7 @@ public class LevelSelectron extends Group {
     }
 
     public void setSelectedLevel(int selectedLevel) {
+        setPage(getPageFromLevel(selectedLevel));
         this.selectedLevel = selectedLevel;
         //reset last button
         if (selectedButton != null) {

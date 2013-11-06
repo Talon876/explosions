@@ -97,9 +97,9 @@ public class PagedScrollPane extends ScrollPane {
         float pageX = 0;
         float pageWidth = 0;
         if (pages.size > 0) {
-            for (Actor a : pages) {
-                pageX = a.getX();
-                pageWidth = a.getWidth();
+            for (Actor page : pages) {
+                pageX = page.getX();
+                pageWidth = page.getWidth();
                 if (scrollX < (pageX + pageWidth * 0.5)) {
                     break;
                 }
@@ -108,4 +108,20 @@ public class PagedScrollPane extends ScrollPane {
         }
     }
 
+    @Override
+    public void setScrollX(float pixels) {
+        super.setScrollX(pixels);
+    }
+
+    /**
+     * This only works if the Actor's in the scrollpane are Table's and are all of the same width
+     * 
+     * @param pageNum
+     *            the page number to scroll to
+     */
+    public void setPage(int pageNum) {
+        Table page = (Table) content.getChildren().first();
+        float pageWidth = page.getPrefWidth() + page.getPadLeft() + page.getPadRight();
+        scrollX(MathUtils.clamp((pageWidth + 47f) * pageNum, 0, content.getPrefWidth())); //47 magic number for padding or something
+    }
 }

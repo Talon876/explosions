@@ -17,11 +17,12 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 
 public class Explosion extends Actor {
-    private static final float MIN_SPEED = 1.6f, MAX_SPEED = 2.1f, //random speeds
+    private static final float MIN_SPEED = 1.6f, MAX_SPEED = 2.15f, //random speeds
             GROW_SIZE = 128f, //max size to explode to
             GROW_TIME = 1.1f, //time spent growing to max size
             SHRINK_TIME = 0.75f, //time spent shrinking
             WAIT_TIME = 1.15f; //time in seconds to wait at max size before dying
+    private static final int ANGLE_FLUCTUATION = 15; //degrees
 
     private final Rectangle bounds;
     private final TextureRegion texture;
@@ -54,13 +55,28 @@ public class Explosion extends Actor {
         explodeEffect = new ParticleEffect();
         explodeEffect.load(Gdx.files.internal("particles/explode.p"), Gdx.files.internal("images/"));
 
-        velocity = new Vector2(1, 1).setAngle(MathUtils.random(360));
+        velocity = new Vector2(1, 1).setAngle(getRandomAngle(ANGLE_FLUCTUATION));
         speed = MathUtils.random(MIN_SPEED, MAX_SPEED);
 
         setSize(32, 32);
 
         setColor(new Color(ColorUtils.HSBtoRGB(MathUtils.random(), 1f, 1f)));
         state = ExplosionState.MOVING;
+    }
+
+    /**
+     * Calculates a random angle that isn't too close to 0, 90, 270, or 360
+     * 
+     * @param fluctuation
+     *            amount of degrees away from vertical/horizontal. Must be 0 < fluctuation < 45
+     * @return random degrees
+     */
+    private int getRandomAngle(int fluctuation) {
+        if (fluctuation >= 45 || fluctuation < 0) {
+            throw new IllegalArgumentException("Fluctuation value must satisfy: 0 < fluctuation < 45");
+        }
+        int quadrant = MathUtils.random(0, 3);
+        return MathUtils.random((quadrant * 90) + fluctuation, ((quadrant + 1) * 90) - fluctuation);
     }
 
     public Explosion(Rectangle bounds, Texture texture) {

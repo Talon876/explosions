@@ -13,7 +13,7 @@ public class LevelInfo {
     static {
         Array<LevelInfo> tmp = new Array<LevelInfo>();
         LevelInfo info = new LevelInfo(3, 4);
-        for (int i = 0; info.numTotal <= 70; i++) {
+        for (int i = 0; info.numTotal <= 71; i++) {
             info = LevelInfo.generateLevelInfo(i);
             tmp.add(info);
         }
@@ -63,7 +63,7 @@ public class LevelInfo {
         // I'm definitely overcomplicating things
         double e_equation = 63.0 * Math.pow(Math.E, -((1.0 / 900.0) * Math.pow(x + 5.0, 2.0)));
         int needed = (int) Math.round(63.0 - e_equation + (1f * Math.cos(0.65f * x)));
-        int total = (int) Math.round(70.0 - e_equation + (2.25f * Math.sin(0.65f * x)));
+        int total = (int) Math.round(72.0 - e_equation + (2.25f * Math.sin(0.65f * x)));
         return new LevelInfo(needed, total);
     }
 

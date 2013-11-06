@@ -209,6 +209,10 @@ public class Explosion extends Actor {
         return state;
     }
 
+    public Vector2 getVelocity() {
+        return velocity;
+    }
+
     public void setDeathAction(Runnable deathAction) {
         this.deathAction = deathAction;
     }

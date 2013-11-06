@@ -6,6 +6,7 @@ import org.nolat.explosions.entities.CompletionText;
 import org.nolat.explosions.entities.Explosion;
 import org.nolat.explosions.entities.Explosion.ExplosionState;
 import org.nolat.explosions.entities.HUD;
+import org.nolat.explosions.entities.InfoWidget;
 import org.nolat.explosions.utils.InputAdapter;
 import org.nolat.explosions.utils.SaveData;
 
@@ -136,6 +137,8 @@ public class Play implements Screen {
         final Sound popFx = Gdx.audio.newSound(Gdx.files.internal("sfx/pop.ogg"));
         final Sound puffFx = Gdx.audio.newSound(Gdx.files.internal("sfx/puff.ogg"));
 
+        final InfoWidget infoWidget = new InfoWidget();
+
         Gdx.input.setCatchBackKey(true);
         Gdx.input.setInputProcessor(new InputMultiplexer(new InputAdapter() {
 
@@ -154,6 +157,10 @@ public class Play implements Screen {
             @Override
             public boolean keyDown(int keycode) {
                 switch (keycode) {
+                case Keys.I:
+                    if (Config.debug) {
+                        infoWidget.setVisible(!infoWidget.isVisible());
+                    }
                 case Keys.F10:
                     HUD.showFps = !HUD.showFps;
                     break;
@@ -201,11 +208,13 @@ public class Play implements Screen {
         hud = new HUD(hudFont, barFont, levelInfo, bounds, 2f);
         stage.addActor(hud);
 
+        //Info widget
+        stage.addActor(infoWidget);
+
         //Completion text
         final Texture winTexture = new Texture("images/win.png"), failTexture = new Texture("images/fail.png");
         completionText = new CompletionText(winTexture, failTexture);
         stage.addActor(completionText);
-
     }
 
     @Override

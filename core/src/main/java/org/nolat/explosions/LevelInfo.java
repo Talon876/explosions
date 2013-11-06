@@ -21,7 +21,6 @@ public class LevelInfo {
         //always add 0th level
         tmp.get(0).setLevel(0);
         levelData.put(0, tmp.get(0));
-
         int lvl = 1;
         for (int i = 1; i < tmp.size; i++) {
             float perCent = (float) tmp.get(i).numNeededToPass / (float) tmp.get(i).numTotal;

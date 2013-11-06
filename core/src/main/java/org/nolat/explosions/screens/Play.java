@@ -252,6 +252,7 @@ public class Play implements Screen {
                 public void run() {
                     //save progress if this is the highest level unlocked
                     SaveData.saveLevelsUnlocked(nextLevel.level);
+                    SaveData.saveLevelScore(levelInfo.level, numDestroyed);
                     ((Game) Gdx.app.getApplicationListener()).setScreen(new Play(nextLevel));
                 }
             })));

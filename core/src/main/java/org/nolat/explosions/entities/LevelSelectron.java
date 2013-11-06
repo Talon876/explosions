@@ -24,6 +24,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 public class LevelSelectron extends Group {
+    private static final int BUTTONS_PER_ROW = 7, BUTTONS_PER_PAGE = 35;
 
     private final BitmapFont font;
     private final Texture buttonTexture;
@@ -65,12 +66,12 @@ public class LevelSelectron extends Group {
         // there must be at least 7 buttons on a page for page scrolling to work correctly
         Table levelPage = null;
         for (int i = 0; i < getButtonAmount(); i++) {
-            if (i % 35 == 0) {
+            if (i % BUTTONS_PER_PAGE == 0) { //pages should have 35 buttons (5 rows)
                 levelPage = new Table().pad(0f);
                 levelPage.defaults().pad(15f, 25f, 15f, 25f);
                 pagedScrollArea.addPage(levelPage);
             }
-            if (i % (LevelInfo.getNumberOfLevels() / 5) == 0) {
+            if (i % BUTTONS_PER_ROW == 0) {
                 levelPage.row();
             }
             levelPage.add(getLevelButton((i)));
@@ -86,14 +87,14 @@ public class LevelSelectron extends Group {
      */
     private int getButtonAmount() {
         int numLevels = LevelInfo.getNumberOfLevels();
-        while (numLevels % 7 != 0) {
+        while (numLevels % BUTTONS_PER_ROW != 0) {
             numLevels++;
         }
         return numLevels;
     }
 
     private int getPageFromLevel(int level) {
-        return level / 35; //int division to find which page the level is on
+        return level / BUTTONS_PER_PAGE; //int division to find which page the level is on
     }
 
     public void setPage(int page) {
@@ -169,7 +170,6 @@ public class LevelSelectron extends Group {
         //set pulsing effect to represent current selection
         selectedButton = levelButtonMap.get(selectedLevel);
         selectedButton.addAction(Actions.forever(Actions.sequence(Actions.alpha(0.2f, 1f), Actions.alpha(1f, 1f))));
-        //TODO scroll to correct page
     }
 
     public int getLevelsUnlocked() {

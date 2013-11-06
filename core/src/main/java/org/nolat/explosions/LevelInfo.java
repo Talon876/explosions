@@ -7,6 +7,7 @@ import java.util.List;
 import com.badlogic.gdx.utils.Array;
 
 public class LevelInfo {
+    private static float PER_CENT_IGNORE = 0.93f;
     private static HashMap<Integer, LevelInfo> levelData = new HashMap<>();
 
     static {
@@ -19,7 +20,14 @@ public class LevelInfo {
         tmp.reverse();
         for (int i = 0; i < tmp.size; i++) {
             tmp.get(i).setLevel(i);
-            levelData.put(i, tmp.get(i));
+            float perCent = (float) tmp.get(i).numNeededToPass / (float) tmp.get(i).numTotal;
+            if (perCent < PER_CENT_IGNORE) {
+                levelData.put(i, tmp.get(i));
+            } else {
+                if (Config.debug) {
+                    System.out.println("Discarded " + tmp.get(i) + " for having " + perCent);
+                }
+            }
             if (Config.debug) {
                 System.out.println(tmp.get(i));
             }
@@ -35,8 +43,9 @@ public class LevelInfo {
     }
 
     public static LevelInfo generateLevelInfo(int x) {
-        int needed = (int) Math.round((Math.pow(Math.E, -Math.pow(x / 20.0, 2.0)) * 65f + 1f));
-        int total = (int) Math.round((Math.pow(Math.E, -Math.pow(x / 27.0, 2.0)) * 65f + 2f));
+        // e^(-(x/20)^2)*65+1 ; e^(-(x/27)^2)*65+2
+        int needed = (int) Math.round((Math.pow(Math.E, -Math.pow(x / 15.0, 2.0)) * 60f + 1f));
+        int total = (int) Math.round((Math.pow(Math.E, -Math.pow(x / 20.0, 2.0)) * 65f + 2f));
         return new LevelInfo(needed, total);
     }
 

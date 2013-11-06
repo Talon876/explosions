@@ -29,6 +29,7 @@ public class Explosion extends Actor {
     private final Sound dieFx;
 
     private final ParticleEffect confettiTrail;
+    private final ParticleEffect explodeEffect;
     private float[] particleColor;
 
     public final Vector2 velocity;
@@ -50,6 +51,9 @@ public class Explosion extends Actor {
         confettiTrail.setPosition(getX(), getY());
         confettiTrail.start();
 
+        explodeEffect = new ParticleEffect();
+        explodeEffect.load(Gdx.files.internal("particles/explode.p"), Gdx.files.internal("images/"));
+
         velocity = new Vector2(1, 1).setAngle(MathUtils.random(360));
         speed = MathUtils.random(MIN_SPEED, MAX_SPEED);
 
@@ -68,20 +72,22 @@ public class Explosion extends Actor {
         if (growFx != null) {
             growFx.play();
         }
+        explodeEffect.reset();
+        explodeEffect.start();
         addAction(Actions.sequence(
                 Actions.parallel(Actions.sizeTo(GROW_SIZE, GROW_SIZE, GROW_TIME, Interpolation.exp5In),
                         Actions.alpha(0.75f, GROW_TIME, Interpolation.exp5In)), Actions.delay(WAIT_TIME),
                         Actions.sizeTo(0, 0, SHRINK_TIME, Interpolation.exp5Out), Actions.run(deathAction),
                         Actions.run(new Runnable() {
-
                             @Override
                             public void run() {
                                 if (dieFx != null) {
                                     dieFx.play();
                                 }
+                                explodeEffect.dispose();
+                                confettiTrail.dispose();
                                 Explosion.this.remove();
                             }
-
                         })));
     }
 
@@ -149,6 +155,7 @@ public class Explosion extends Actor {
         if (parentAlpha >= .9f) {
             confettiTrail.draw(batch, Gdx.graphics.getDeltaTime());
         }
+        explodeEffect.draw(batch, Gdx.graphics.getDeltaTime());
         batch.setColor(new Color(getColor().r, getColor().g, getColor().b, getColor().a * parentAlpha));
         batch.draw(texture, getX() - getWidth() / 2, getY() - getHeight() / 2, getOriginX(), getOriginY(), getWidth(),
                 getHeight(), getScaleX(), getScaleY(), getRotation());
@@ -170,6 +177,8 @@ public class Explosion extends Actor {
     private void updateParticles() {
         confettiTrail.setPosition(getX(), getY());
         confettiTrail.findEmitter("confetti").getTint().setColors(particleColor);
+        explodeEffect.setPosition(getX(), getY());
+        explodeEffect.findEmitter("explode").getTint().setColors(particleColor);
     }
 
     public enum ExplosionState {

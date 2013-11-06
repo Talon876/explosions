@@ -219,7 +219,7 @@ public class MainMenu implements Screen {
                     Explosion exp = (Explosion) actors[i];
                     Vector2 expPos = new Vector2(exp.getX(), exp.getY());
                     //left = repel, right/other = attract
-                    exp.velocity.set(expPos.sub(forcePoint).nor().scl(button == 0 ? 1f : -1f));
+                    exp.velocity.set(expPos.sub(forcePoint).nor().scl(button == 0 ? -1f : 1f));
                 }
                 explosionsGroup.getChildren().end();
                 return false;

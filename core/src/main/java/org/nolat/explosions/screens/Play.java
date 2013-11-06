@@ -135,6 +135,7 @@ public class Play implements Screen {
         final Sound popFx = Gdx.audio.newSound(Gdx.files.internal("sfx/pop.ogg"));
         final Sound puffFx = Gdx.audio.newSound(Gdx.files.internal("sfx/puff.ogg"));
 
+        Gdx.input.setCatchBackKey(true);
         Gdx.input.setInputProcessor(new InputMultiplexer(new InputAdapter() {
 
             @Override
@@ -158,6 +159,7 @@ public class Play implements Screen {
                 case Keys.F12:
                     advanceToNextLevel();
                     break;
+                case Keys.BACK:
                 case Keys.ESCAPE:
                     stage.addAction(Actions.sequence(Actions.fadeOut(0.5f), Actions.run(new Runnable() {
                         @Override

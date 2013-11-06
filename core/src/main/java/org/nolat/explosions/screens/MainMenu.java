@@ -123,6 +123,27 @@ public class MainMenu implements Screen {
             }
         });
 
+        //settings button
+        final TextButton buttonSettings = new TextButton("Settings", buttonStyle);
+        buttonSettings.addListener(new ClickListener() {
+            @Override
+            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                if (buttonPlay.getColor().a >= 1f) {
+                    rolloverSfx.play();
+                }
+            }
+
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                //                stage.addAction(Actions.sequence(Actions.fadeOut(0.5f), Actions.run(new Runnable() {
+                //                    @Override
+                //                    public void run() {
+                //                                               ((Game) Gdx.app.getApplicationListener()).setScreen(new LevelMenu());
+                //                    }
+                //                })));
+            }
+        });
+
         //exit button
         final TextButton buttonExit = new TextButton("Exit", buttonStyle);
         buttonExit.addListener(new ClickListener() {
@@ -259,9 +280,10 @@ public class MainMenu implements Screen {
         })));
 
         //putting stuff together
-        table.add(heading).spaceBottom(150f);
-        table.row(); //add new row
+        table.add(heading).expandX().spaceBottom(150f).row();
         table.add(buttonPlay).size(210f, 76f).spaceBottom(25f);
+        table.row();
+        table.add(buttonSettings).size(210f, 76f).spaceBottom(25f);
         table.row();
         table.add(buttonExit).size(210f, 76f);
         stage.addActor(table);
@@ -290,10 +312,12 @@ public class MainMenu implements Screen {
         .push(Tween.set(explosionsGroup, ActorAccessor.ALPHA).target(0f))
         .push(Tween.set(heading, ActorAccessor.ALPHA).target(0f))
         .push(Tween.set(buttonPlay, ActorAccessor.ALPHA).target(0f))
+        .push(Tween.set(buttonSettings, ActorAccessor.ALPHA).target(0f))
         .push(Tween.set(buttonExit, ActorAccessor.ALPHA).target(0f))
         .push(Tween.to(background, ActorAccessor.ALPHA, 1.0f).target(1f))
         .push(Tween.to(heading, ActorAccessor.ALPHA, 0.2f).target(1f))
         .push(Tween.to(buttonPlay, ActorAccessor.ALPHA, 0.2f).target(1f))
+        .push(Tween.to(buttonSettings, ActorAccessor.ALPHA, 0.2f).target(1f))
         .push(Tween.to(buttonExit, ActorAccessor.ALPHA, 0.2f).target(1f))
         .push(Tween.to(explosionsGroup, ActorAccessor.ALPHA, 0.5f).target(1f))
         .end()

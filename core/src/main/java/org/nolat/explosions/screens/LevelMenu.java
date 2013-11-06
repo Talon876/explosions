@@ -164,7 +164,6 @@ public class LevelMenu implements Screen {
         back.pad(3f, 10f, 3f, 10f);
 
         //putting stuff together
-        table.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         table.add("Select Level").colspan(3).expandX().spaceBottom(25).row();
 
         table.add(back).size(210f, 76f).uniformX().bottom().left().padLeft(28).padBottom(20);

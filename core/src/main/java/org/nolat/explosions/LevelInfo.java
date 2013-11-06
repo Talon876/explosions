@@ -59,11 +59,8 @@ public class LevelInfo {
     }
 
     public static LevelInfo generateLevelInfo(int x) {
-        // I've gone insane: http://www.wolframalpha.com/input/?i=63-63*e%5E%28-%28%28x%2B5%29%2F30%29%5E2%29+%2B+4*%280.25*cos%280.65*x%29%29+%2B+0+and+x%3D70+and+x+and+63-63*e%5E%28-%28%28x%2B5%29%2F30%29%5E2%29+%2B+5*%280.45*sin%280.65*x%29%29+%2B+7+from+0+to+65
-        // I'm definitely overcomplicating things
-        double e_equation = 63.0 * Math.pow(Math.E, -((1.0 / 900.0) * Math.pow(x + 5.0, 2.0)));
-        int needed = (int) Math.round(63.0 - e_equation + (1f * Math.cos(0.65f * x)));
-        int total = (int) Math.round(72.0 - e_equation + (2.25f * Math.sin(0.65f * x)));
+        int total = (int) Math.round(10 + 0.95 * x + 1.25 * Math.sin(0.65 * x));
+        int needed = (int) Math.round(2 + x + Math.cos(0.65 * x));
         return new LevelInfo(needed, total);
     }
 

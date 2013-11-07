@@ -71,15 +71,11 @@ public class InfoWidget extends Actor {
             sr.rect(getX(), getY(), 2f, 2f);
             sr.circle(avgPosition.x, avgPosition.y, 5f);
             sr.setColor(new Color(0f, 1f, 0f, 0.05f));
-            for (Vector2 pos : locations) {
-                //            sr.line(getX(), getY(), pos.x, pos.y);
-            }
 
             sr.setColor(Color.YELLOW);
             sr.line(getX(), getY(), getX() + avgVelocity.x * 25f, getY() + avgVelocity.y * 25f);
 
             for (int i = 0; i < locations.size; i++) {
-                //            sr.line(locations.get(i), velocities.get(i).scl(25f));
                 sr.line(locations.get(i).x, locations.get(i).y, locations.get(i).x + velocities.get(i).x * 300f,
                         locations.get(i).y + velocities.get(i).y * 300f);
             }

@@ -1,6 +1,5 @@
 package org.nolat.explosions;
 
-
 public class Config {
     public static final String NAME = "Explosions";
     public static final String VERSION = "0.1";

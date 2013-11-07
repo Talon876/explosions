@@ -1,8 +1,8 @@
 package org.nolat.explosions.screens;
 
-import org.nolat.explosions.Config;
 import org.nolat.explosions.LevelInfo;
 import org.nolat.explosions.utils.ColorUtils;
+import org.nolat.explosions.utils.FontUtils;
 import org.nolat.explosions.utils.InputAdapter;
 import org.nolat.explosions.utils.PagedScrollPane;
 
@@ -135,7 +135,7 @@ public class ExperimentScreen implements Screen {
         checkHollow.setFilter(TextureFilter.Linear, TextureFilter.Linear);
         skin = new Skin(Gdx.files.internal("ui/menuSkin.json"), new TextureAtlas("ui/simpleatlas.atlas"));
         container = new Table();
-        font = Config.generateFont("fonts/square.ttf", 36, Color.WHITE);
+        font = FontUtils.generateFont("fonts/square.ttf", 36, Color.WHITE);
         stage.addActor(container);
         container.setFillParent(true);
         //        container.debug();

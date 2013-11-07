@@ -3,6 +3,7 @@ package org.nolat.explosions.screens;
 import org.nolat.explosions.Config;
 import org.nolat.explosions.LevelInfo;
 import org.nolat.explosions.entities.LevelSelectron;
+import org.nolat.explosions.utils.FontUtils;
 import org.nolat.explosions.utils.InputAdapter;
 import org.nolat.explosions.utils.SaveData;
 import org.nolat.explosions.utils.ShaderUtils;
@@ -100,9 +101,9 @@ public class LevelMenu implements Screen {
         table = new Table(skin);
         table.setFillParent(true);
 
-        levelSelectFont = Config.generateFont("fonts/square.ttf", 36, Color.WHITE);
-        buttonFont = Config.generateFont("fonts/square.ttf", 42, Color.WHITE);
-        titleFont = Config.generateFont("fonts/square.ttf", 90, Color.BLACK);
+        levelSelectFont = FontUtils.generateFont("fonts/square.ttf", 36, Color.WHITE);
+        buttonFont = FontUtils.generateFont("fonts/square.ttf", 42, Color.WHITE);
+        titleFont = FontUtils.generateFont("fonts/square.ttf", 90, Color.BLACK);
 
         LabelStyle labelStyle = skin.get("default", LabelStyle.class);
         labelStyle.font = titleFont;

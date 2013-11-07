@@ -1,6 +1,6 @@
 package org.nolat.explosions.screens;
 
-import org.nolat.explosions.Config;
+import org.nolat.explosions.utils.FontUtils;
 import org.nolat.explosions.utils.InputAdapter;
 
 import com.badlogic.gdx.Game;
@@ -150,7 +150,7 @@ public class BonusGame implements Screen {
 
     @Override
     public void show() {
-        scoreFont = Config.generateFont("fonts/square.ttf", 26, Color.WHITE);
+        scoreFont = FontUtils.generateFont("fonts/square.ttf", 26, Color.WHITE);
         batch = new SpriteBatch();
 
         world = new World(new Vector2(0, -9.81f), true);

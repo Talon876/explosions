@@ -4,6 +4,7 @@ import org.nolat.explosions.Config;
 import org.nolat.explosions.KonamiInputDetector;
 import org.nolat.explosions.entities.Explosion;
 import org.nolat.explosions.tween.ActorAccessor;
+import org.nolat.explosions.utils.FontUtils;
 import org.nolat.explosions.utils.InputAdapter;
 
 import aurelienribon.tweenengine.Timeline;
@@ -94,9 +95,9 @@ public class MainMenu implements Screen {
         table.setFillParent(true);
 
         //creating fonts
-        buttonFont = Config.generateFont("fonts/square.ttf", 42, Color.WHITE);
-        titleFont = Config.generateFont("fonts/square.ttf", 90, Color.BLACK);
-        textFont = Config.generateFont("fonts/minecraftia.ttf", 16, Color.BLUE);
+        buttonFont = FontUtils.generateFont("fonts/square.ttf", 42, Color.WHITE);
+        titleFont = FontUtils.generateFont("fonts/square.ttf", 90, Color.BLACK);
+        textFont = FontUtils.generateFont("fonts/minecraftia.ttf", 16, Color.BLUE);
 
         //programmatically add font to style
         TextButtonStyle buttonStyle = skin.get("default", TextButtonStyle.class);

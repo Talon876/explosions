@@ -7,6 +7,7 @@ import org.nolat.explosions.entities.Explosion;
 import org.nolat.explosions.entities.Explosion.ExplosionState;
 import org.nolat.explosions.entities.HUD;
 import org.nolat.explosions.entities.InfoWidget;
+import org.nolat.explosions.utils.FontUtils;
 import org.nolat.explosions.utils.InputAdapter;
 import org.nolat.explosions.utils.SaveData;
 
@@ -202,9 +203,9 @@ public class Play implements Screen {
         stage.addAction(Actions.sequence(Actions.alpha(0), Actions.fadeIn(0.5f)));
 
         //HUD
-        hudFont = Config.generateFont("fonts/minecraftia.ttf", 16, Color.BLACK);
-        barFont = Config.generateFont("fonts/quadrats.ttf", 16, Color.BLACK);
-        completionFont = Config.generateFont("fonts/quadrats.ttf", 42, Color.BLACK);
+        hudFont = FontUtils.generateFont("fonts/minecraftia.ttf", 16, Color.BLACK);
+        barFont = FontUtils.generateFont("fonts/quadrats.ttf", 16, Color.BLACK);
+        completionFont = FontUtils.generateFont("fonts/quadrats.ttf", 42, Color.BLACK);
         hud = new HUD(hudFont, barFont, levelInfo, bounds, 2f);
         stage.addActor(hud);
 

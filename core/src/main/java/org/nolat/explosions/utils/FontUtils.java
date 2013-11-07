@@ -7,7 +7,18 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 
 public class FontUtils {
-	
+
+    /**
+     * Generates a {@link BitmapFont} from a TTF font file.
+     * 
+     * @param internalPath
+     *            the internal path to the font location
+     * @param size
+     *            the size of the font
+     * @param color
+     *            the color of the font
+     * @return the generated font
+     */
     public static BitmapFont generateFont(String internalPath, int size, Color color) {
         FreeTypeFontGenerator gen = new FreeTypeFontGenerator(Gdx.files.internal(internalPath));
         BitmapFont font = null;

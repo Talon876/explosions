@@ -19,6 +19,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -126,12 +127,14 @@ public class Play implements Screen {
 
     @Override
     public void resize(int width, int height) {
-        stage.setViewport(width, height, true);
+        stage.setViewport(Config.WIDTH, Config.HEIGHT, true);
+        ((OrthographicCamera) stage.getCamera()).setToOrtho(false, Config.WIDTH, Config.HEIGHT);
+        stage.getCamera().update();
     }
 
     @Override
     public void show() {
-        stage = new Stage();
+        stage = new Stage(Config.WIDTH, Config.HEIGHT, true);
         final Texture explosionTexture = new Texture("images/disc256.png");
         explosionTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 

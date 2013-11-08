@@ -41,6 +41,7 @@ public class Explosion extends Actor {
     private Runnable deathAction;
 
     public Explosion(Rectangle bounds, Texture texture, Sound growFx, Sound dieFx) {
+        System.out.println("Bounds: " + bounds.x + ", " + bounds.y + ", " + bounds.width + ", " + bounds.height);
         this.bounds = bounds;
         this.texture = new TextureRegion(texture);
         this.growFx = growFx;
@@ -111,16 +112,16 @@ public class Explosion extends Actor {
         //failsafe, if just reversing the velocity failed, just teleport out
         //doing this first gives it a frame to set the position again
         //this can only occur on the title screen
-        if (getX() - getWidth() / 2 < bounds.x - 4) {
-            setPosition(getX() + 32, getY());
-        } else if (getX() + getWidth() / 2 > bounds.x + bounds.width + 4) {
-            setPosition(getX() - 32, getY());
-        }
-        if (getY() - getHeight() / 2 < bounds.y - 4) {
-            setPosition(getX(), getY() + 32);
-        } else if (getY() + getHeight() / 2 > bounds.y + bounds.height + 4) {
-            setPosition(getX(), getY() - 32);
-        }
+        //        if (getX() - getWidth() / 2 < bounds.x - 4) {
+        //            setPosition(getX() + 32, getY());
+        //        } else if (getX() + getWidth() / 2 > bounds.x + bounds.width + 4) {
+        //            setPosition(getX() - 32, getY());
+        //        }
+        //        if (getY() - getHeight() / 2 < bounds.y - 4) {
+        //            setPosition(getX(), getY() + 32);
+        //        } else if (getY() + getHeight() / 2 > bounds.y + bounds.height + 4) {
+        //            setPosition(getX(), getY() - 32);
+        //        }
 
         //check for bouncing
         if (getX() - getWidth() / 2 < bounds.x) {

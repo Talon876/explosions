@@ -25,6 +25,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -65,13 +66,14 @@ public class MainMenu implements Screen {
 
     @Override
     public void resize(int width, int height) {
-        stage.setViewport(width, height, true);
+        //        stage.setViewport(width, height, true);
+        stage.setViewport(Config.WIDTH, Config.HEIGHT, true);
         table.invalidateHierarchy();
     }
 
     @Override
     public void show() {
-        stage = new Stage();
+        stage = new Stage(Config.WIDTH, Config.HEIGHT, true);
         rolloverSfx = Gdx.audio.newSound(Gdx.files.internal("sfx/rollover.ogg"));
         badingSfx = Gdx.audio.newSound(Gdx.files.internal("sfx/bading.ogg"));
 
@@ -91,7 +93,7 @@ public class MainMenu implements Screen {
         skin = new Skin(Gdx.files.internal("ui/menuSkin.json"), new TextureAtlas("ui/simpleatlas.atlas"));
 
         table = new Table(skin);
-        table.setBounds(0, 100, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        table.setBounds(0, 100, Config.WIDTH, Config.HEIGHT);
         table.setFillParent(true);
 
         //creating fonts
@@ -235,7 +237,9 @@ public class MainMenu implements Screen {
 
             @Override
             public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-                Vector2 forcePoint = new Vector2(screenX, Gdx.graphics.getHeight() - screenY);
+                Vector3 forcePoint3 = new Vector3(screenX, screenY, 0);
+                stage.getCamera().unproject(forcePoint3);
+                Vector2 forcePoint = new Vector2(forcePoint3.x, forcePoint3.y);
                 Actor[] actors = explosionsGroup.getChildren().begin();
                 for (int i = 0, n = explosionsGroup.getChildren().size; i < n; i++) {
                     Explosion exp = (Explosion) actors[i];
@@ -273,8 +277,8 @@ public class MainMenu implements Screen {
                 badingSfx.play();
                 bonus.setVisible(true);
                 //fade in and move from top
-                bonus.addAction(Actions.sequence(Actions.alpha(0f), Actions.moveTo(bonus.getX(),
-                        Gdx.graphics.getHeight()), Actions.parallel(
+                bonus.addAction(Actions.sequence(Actions.alpha(0f), Actions.moveTo(bonus.getX(), Config.HEIGHT),
+                        Actions.parallel(
                                 Actions.moveTo(bonus.getX(), stage.getHeight() / 2 - bonus.getHeight() / 2, 0.5f),
                                 Actions.fadeIn(0.5f))));
             }
@@ -327,7 +331,7 @@ public class MainMenu implements Screen {
 
         //table fade in
         Tween.from(table, ActorAccessor.ALPHA, 1.5f).target(0).start(tweenManager);
-        Tween.from(table, ActorAccessor.Y, 1.5f).target(Gdx.graphics.getHeight() / 2).start(tweenManager);
+        Tween.from(table, ActorAccessor.Y, 1.5f).target(Config.HEIGHT / 2).start(tweenManager);
         tweenManager.update(Gdx.graphics.getDeltaTime());
 
         //add explosions flying around right above background layer
@@ -347,7 +351,16 @@ public class MainMenu implements Screen {
 
     private Rectangle getBounds() {
         //magic numbers represent border in background image
-        return new Rectangle(16, 8, Gdx.graphics.getWidth() - 32, Gdx.graphics.getHeight() - 16);
+        //scaling has to be done based on ACTUAL window width/height because we're defining points
+        //on a background image that's being scaled to whatever the window size is
+        float widthScale = (Gdx.graphics.getWidth() / Config.WIDTH);
+        float heightScale = (Gdx.graphics.getHeight() / Config.HEIGHT);
+
+        Vector3 topLeft = new Vector3(16f * widthScale, 8f * heightScale, 0);
+        stage.getCamera().unproject(topLeft);
+        System.out.println(topLeft);
+        return new Rectangle(16f * widthScale, 8f * heightScale, Gdx.graphics.getWidth() - 32f * widthScale,
+                Gdx.graphics.getHeight() - 16f * heightScale);
     }
 
     @Override

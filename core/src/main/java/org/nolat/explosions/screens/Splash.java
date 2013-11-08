@@ -1,5 +1,6 @@
 package org.nolat.explosions.screens;
 
+import org.nolat.explosions.Config;
 import org.nolat.explosions.tween.SpriteAccessor;
 
 import aurelienribon.tweenengine.BaseTween;
@@ -12,6 +13,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
@@ -47,10 +49,18 @@ public class Splash implements Screen {
         tweenManager = new TweenManager();
         Tween.registerAccessor(Sprite.class, new SpriteAccessor());
 
+        float widthScale = Gdx.graphics.getWidth() / Config.WIDTH;
+        float heightScale = Gdx.graphics.getHeight() / Config.HEIGHT;
+        System.out.println(widthScale + " scale " + heightScale);
+
         Texture splashTexture = new Texture("icons/nolatorg.png");
+        splashTexture.setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
         splash = new Sprite(splashTexture);
-        splash.setPosition(Gdx.graphics.getWidth() / 2 - splash.getWidth() / 2,
-                Gdx.graphics.getHeight() / 2 - splash.getHeight() / 2);
+        splash.setSize(widthScale * splash.getWidth(), heightScale * splash.getHeight());
+        splash.setOrigin(splash.getWidth() / 2, splash.getWidth() / 2);
+        splash.setPosition((widthScale * Gdx.graphics.getWidth()) / 2 - widthScale * splash.getWidth() / 2,
+                (heightScale * Gdx.graphics.getHeight()) / 2 - heightScale * splash.getHeight() / 2);
+        System.out.println(splash.getX() + ", " + splash.getY());
 
         Tween.set(splash, SpriteAccessor.ALPHA).target(0f).start(tweenManager);
         Tween.to(splash, SpriteAccessor.ALPHA, 1f).target(1f).repeatYoyo(1, 1f).setCallback(new TweenCallback() {

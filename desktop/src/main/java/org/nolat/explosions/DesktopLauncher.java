@@ -15,8 +15,8 @@ public class DesktopLauncher {
         config.useGL20 = true;
         config.vSyncEnabled = true;
         config.title = Config.NAME + " - v" + Config.VERSION;
-        config.width = 1920;//Config.WIDTH;
-        config.height = 1080;//Config.HEIGHT;
+        config.width = (int) Config.WIDTH;
+        config.height = (int) Config.HEIGHT;
         config.fullscreen = false;
         config.addIcon("icons/icon_16.png", FileType.Internal);
         config.addIcon("icons/icon_32.png", FileType.Internal);

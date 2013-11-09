@@ -19,12 +19,12 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
@@ -32,43 +32,44 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 
 public class Play implements Screen {
 
-    private Stage stage;
-    private final LevelInfo levelInfo;
-    private HUD hud;
-    private BitmapFont hudFont;
-    private BitmapFont barFont;
-    private BitmapFont completionFont;
+	private Stage stage;
+	private final LevelInfo levelInfo;
+	private HUD hud;
+	private BitmapFont hudFont;
+	private BitmapFont barFont;
+	private BitmapFont completionFont;
 
-    private int numDestroyed = 0;
-    private boolean seedPlaced = false;
+	private int numDestroyed = 0;
+	private boolean seedPlaced = false;
 
-    private CompletionText completionText;
+	private CompletionText completionText;
 
-    public Play(LevelInfo info) {
-        levelInfo = info;
-        if (Config.debug) {
-            Gdx.app.log("Play", "Level " + (info.level + 1) + ": Explode " + info.numNeededToPass + " out of "
-                    + info.numTotal);
-        }
-    }
+	public Play(LevelInfo info) {
+		levelInfo = info;
+		if (Config.debug) {
+			Gdx.app.log("Play", "Level " + (info.level + 1) + ": Explode " + info.numNeededToPass + " out of "
+					+ info.numTotal);
+		}
+	}
 
-    @Override
-    public void render(float delta) {
-        Gdx.gl.glClearColor(0, 0, 0, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+	@Override
+	public void render(float delta) {
+		Gdx.gl.glClearColor(0, 0, 0, 1);
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        hud.update(numDestroyed);
-        stage.act(delta);
-        stage.draw();
-        checkGameCondition();
-    }
+		hud.update(numDestroyed);
+		stage.act(delta);
+		stage.draw();
+		checkGameCondition();
+	}
 
-    private void checkGameCondition() {
-        if (seedPlaced) { //only check once the initial seed has been placed
-            if (!isExplosionsHappening()) { //wait until no more explosions
-                completionText.setWinning(!hasLost());
-                if (completionText.getActions().size == 0) { //don't re-add actions
-                    //@formatter:off
+	private void checkGameCondition() {
+		if (seedPlaced) { // only check once the initial seed has been placed
+			if (!isExplosionsHappening()) { // wait until no more explosions
+				completionText.setWinning(!hasLost());
+				if (completionText.getActions().size == 0) { // don't re-add
+																// actions
+					//@formatter:off
                     completionText.addAction(
                             Actions.sequence(
                                     Actions.parallel(
@@ -79,7 +80,7 @@ public class Play implements Screen {
                                             Actions.delay(0.5f),
                                             Actions.parallel(
                                                     Actions.scaleTo(0f, 0f, 1.5f),
-                                                    Actions.moveBy(0, Gdx.graphics.getHeight() / 2, 1.25f),
+                                                    Actions.moveBy(0, Config.HEIGHT / 2, 1.25f),
                                                     Actions.fadeOut(1.25f),
                                                     Actions.run(new Runnable() {
                                                         @Override
@@ -95,188 +96,189 @@ public class Play implements Screen {
                                                                 advanceToNextLevel();
                                                             }
                                                         }
-
                                                     }))
                                     )
                             );
                     //@formatter:on
-                }
-            }
-        }
-    }
+				}
+			}
+		}
+	}
 
-    private boolean isExplosionsHappening() {
-        boolean exploding = false;
-        Actor[] actors = stage.getRoot().getChildren().begin();
-        for (int i = 0, n = stage.getRoot().getChildren().size; i < n; i++) {
-            if (actors[i] instanceof Explosion) {
-                Explosion exp = (Explosion) actors[i];
-                if (exp.getState() == ExplosionState.EXPLODING) {
-                    exploding = true;
-                }
-            }
-        }
-        stage.getRoot().getChildren().end();
-        return exploding;
-    }
+	private boolean isExplosionsHappening() {
+		boolean exploding = false;
+		Actor[] actors = stage.getRoot().getChildren().begin();
+		for (int i = 0, n = stage.getRoot().getChildren().size; i < n; i++) {
+			if (actors[i] instanceof Explosion) {
+				Explosion exp = (Explosion) actors[i];
+				if (exp.getState() == ExplosionState.EXPLODING) {
+					exploding = true;
+				}
+			}
+		}
+		stage.getRoot().getChildren().end();
+		return exploding;
+	}
 
-    private boolean hasLost() {
-        boolean lost = seedPlaced && numDestroyed < levelInfo.numNeededToPass;
-        return lost;
-    }
+	private boolean hasLost() {
+		boolean lost = seedPlaced && numDestroyed < levelInfo.numNeededToPass;
+		return lost;
+	}
 
-    @Override
-    public void resize(int width, int height) {
-        stage.setViewport(Config.WIDTH, Config.HEIGHT, true);
-        ((OrthographicCamera) stage.getCamera()).setToOrtho(false, Config.WIDTH, Config.HEIGHT);
-        stage.getCamera().update();
-    }
+	@Override
+	public void resize(int width, int height) {
+		stage.setViewport(Config.WIDTH, Config.HEIGHT, false);
+		stage.getCamera().update();
+	}
 
-    @Override
-    public void show() {
-        stage = new Stage(Config.WIDTH, Config.HEIGHT, true);
-        final Texture explosionTexture = new Texture("images/disc256.png");
-        explosionTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+	@Override
+	public void show() {
+		stage = new Stage(Config.WIDTH, Config.HEIGHT, false);
+		final Texture explosionTexture = new Texture("images/disc256.png");
+		explosionTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 
-        final Sound popFx = Gdx.audio.newSound(Gdx.files.internal("sfx/pop.ogg"));
-        final Sound puffFx = Gdx.audio.newSound(Gdx.files.internal("sfx/puff.ogg"));
+		final Sound popFx = Gdx.audio.newSound(Gdx.files.internal("sfx/pop.ogg"));
+		final Sound puffFx = Gdx.audio.newSound(Gdx.files.internal("sfx/puff.ogg"));
 
-        final InfoWidget infoWidget = new InfoWidget();
+		final InfoWidget infoWidget = new InfoWidget();
 
-        Gdx.input.setCatchBackKey(true);
-        Gdx.input.setInputProcessor(new InputMultiplexer(new InputAdapter() {
+		Gdx.input.setCatchBackKey(true);
+		Gdx.input.setInputProcessor(new InputMultiplexer(new InputAdapter() {
 
-            @Override
-            public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-                if (!seedPlaced) {
-                    Explosion seed = new Explosion(getBounds(), explosionTexture, puffFx, popFx);
-                    seed.setPosition(screenX, Gdx.graphics.getHeight() - screenY);
-                    seed.explode();
-                    stage.addActor(seed);
-                    seedPlaced = true;
-                }
-                return false;
-            }
+			@Override
+			public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+				if (!seedPlaced) {
+					Explosion seed = new Explosion(getBounds(), explosionTexture, puffFx, popFx);
+					Vector3 point3 = new Vector3(screenX, screenY, 0);
+					stage.getCamera().unproject(point3);
+					seed.setPosition(point3.x, point3.y);
+					seed.explode();
+					stage.addActor(seed);
+					seedPlaced = true;
+				}
+				return false;
+			}
 
-            @Override
-            public boolean keyDown(int keycode) {
-                switch (keycode) {
-                case Keys.I:
-                    if (Config.debug) {
-                        infoWidget.setVisible(!infoWidget.isVisible());
-                    }
-                case Keys.F10:
-                    HUD.showFps = !HUD.showFps;
-                    break;
-                case Keys.F12:
-                    advanceToNextLevel();
-                    break;
-                case Keys.BACK:
-                case Keys.ESCAPE:
-                    stage.addAction(Actions.sequence(Actions.fadeOut(0.5f), Actions.run(new Runnable() {
-                        @Override
-                        public void run() {
-                            ((Game) Gdx.app.getApplicationListener()).setScreen(new LevelMenu(levelInfo.level));
-                        }
-                    })));
-                    break;
-                }
-                return false;
-            }
-        }, stage));
+			@Override
+			public boolean keyDown(int keycode) {
+				switch (keycode) {
+				case Keys.I:
+					if (Config.debug) {
+						InfoWidget.IS_VISIBLE = !InfoWidget.IS_VISIBLE;
+					}
+				case Keys.F10:
+					HUD.showFps = !HUD.showFps;
+					break;
+				case Keys.F12:
+					advanceToNextLevel();
+					break;
+				case Keys.BACK:
+				case Keys.ESCAPE:
+					stage.addAction(Actions.sequence(Actions.fadeOut(0.5f), Actions.run(new Runnable() {
+						@Override
+						public void run() {
+							((Game) Gdx.app.getApplicationListener()).setScreen(new LevelMenu(levelInfo.level));
+						}
+					})));
+					break;
+				}
+				return false;
+			}
+		}, stage));
 
-        setupBackground();
+		setupBackground();
 
-        //set initial explosions
-        Rectangle bounds = getBounds();
-        for (int i = 0; i < levelInfo.numTotal; i++) {
-            Explosion exp = new Explosion(getBounds(), explosionTexture, puffFx, popFx);
-            float randomX = MathUtils.random(bounds.x + exp.getWidth(), bounds.x + bounds.width - exp.getWidth());
-            float randomY = MathUtils.random(bounds.y + exp.getHeight(), bounds.y + bounds.height - exp.getHeight());
-            exp.setPosition(randomX, randomY);
-            exp.setDeathAction(new Runnable() {
-                @Override
-                public void run() {
-                    numDestroyed++;
-                }
-            });
-            stage.addActor(exp);
-        }
+		// set initial explosions
+		Rectangle bounds = getBounds();
+		for (int i = 0; i < levelInfo.numTotal; i++) {
+			Explosion exp = new Explosion(getBounds(), explosionTexture, puffFx, popFx);
+			float randomX = MathUtils.random(bounds.x + exp.getWidth(), bounds.x + bounds.width - exp.getWidth());
+			float randomY = MathUtils.random(bounds.y + exp.getHeight(), bounds.y + bounds.height - exp.getHeight());
+			exp.setPosition(randomX, randomY);
+			exp.setDeathAction(new Runnable() {
+				@Override
+				public void run() {
+					numDestroyed++;
+				}
+			});
+			stage.addActor(exp);
+		}
 
-        stage.addAction(Actions.sequence(Actions.alpha(0), Actions.fadeIn(0.5f)));
+		stage.addAction(Actions.sequence(Actions.alpha(0), Actions.fadeIn(0.5f)));
 
-        //HUD
-        hudFont = FontUtils.generateFont("fonts/minecraftia.ttf", 16, Color.BLACK);
-        barFont = FontUtils.generateFont("fonts/quadrats.ttf", 16, Color.BLACK);
-        completionFont = FontUtils.generateFont("fonts/quadrats.ttf", 42, Color.BLACK);
-        hud = new HUD(hudFont, barFont, levelInfo, bounds, 2f);
-        stage.addActor(hud);
+		// HUD
+		hudFont = FontUtils.generateFont("fonts/minecraftia.ttf", 16, Color.BLACK);
+		barFont = FontUtils.generateFont("fonts/quadrats.ttf", 16, Color.BLACK);
+		completionFont = FontUtils.generateFont("fonts/quadrats.ttf", 42, Color.BLACK);
+		hud = new HUD(hudFont, barFont, levelInfo, bounds, 2f);
+		stage.addActor(hud);
 
-        //Info widget
-        stage.addActor(infoWidget);
+		// Info widget
+		stage.addActor(infoWidget);
 
-        //Completion text
-        final Texture winTexture = new Texture("images/win.png"), failTexture = new Texture("images/fail.png");
-        completionText = new CompletionText(winTexture, failTexture);
-        stage.addActor(completionText);
-    }
+		// Completion text
+		final Texture winTexture = new Texture("images/win.png"), failTexture = new Texture("images/fail.png");
+		completionText = new CompletionText(winTexture, failTexture);
+		stage.addActor(completionText);
+	}
 
-    @Override
-    public void hide() {
-        dispose();
-    }
+	@Override
+	public void hide() {
+		dispose();
+	}
 
-    @Override
-    public void pause() {
+	@Override
+	public void pause() {
 
-    }
+	}
 
-    @Override
-    public void resume() {
+	@Override
+	public void resume() {
 
-    }
+	}
 
-    @Override
-    public void dispose() {
-        stage.dispose();
-        hudFont.dispose();
-        barFont.dispose();
-        completionFont.dispose();
-    }
+	@Override
+	public void dispose() {
+		stage.dispose();
+		hudFont.dispose();
+		barFont.dispose();
+		completionFont.dispose();
+	}
 
-    private void setupBackground() {
-        Texture backgroundTexture = new Texture("backgrounds/title.png");
-        Image background = new Image(backgroundTexture);
-        background.setPosition(0, 0);
-        background.setFillParent(true);
-        stage.addActor(background);
-    }
+	private void setupBackground() {
+		Texture backgroundTexture = new Texture("backgrounds/title.png");
+		Image background = new Image(backgroundTexture);
+		background.setPosition(0, 0);
+		background.setFillParent(true);
+		stage.addActor(background);
+	}
 
-    public Rectangle getBounds() {
-        //magic numbers represent border in background image
-        return new Rectangle(16, 8, Gdx.graphics.getWidth() - 32, Gdx.graphics.getHeight() - 16);
-    }
+	public Rectangle getBounds() {
+		// magic numbers represent border in background image
+		return new Rectangle(16f, 8f, Config.WIDTH - 32f, Config.HEIGHT - 16f);
+	}
 
-    private void advanceToNextLevel() {
-        final LevelInfo nextLevel = LevelInfo.getLevelInfo(levelInfo.level + 1);
-        if (nextLevel != null) {
-            stage.addAction(Actions.sequence(Actions.fadeOut(1.25f), Actions.run(new Runnable() {
-                @Override
-                public void run() {
-                    //save progress if this is the highest level unlocked
-                    SaveData.saveLevelsUnlocked(nextLevel.level);
-                    SaveData.saveLevelScore(levelInfo.level, numDestroyed);
-                    ((Game) Gdx.app.getApplicationListener()).setScreen(new Play(nextLevel));
-                }
-            })));
-        } else {
-            //TODO go to a win screen
-            stage.addAction(Actions.sequence(Actions.fadeOut(1.25f), Actions.run(new Runnable() {
-                @Override
-                public void run() {
-                    ((Game) Gdx.app.getApplicationListener()).setScreen(new MainMenu());
-                }
-            })));
-        }
-    }
+	private void advanceToNextLevel() {
+		final LevelInfo nextLevel = LevelInfo.getLevelInfo(levelInfo.level + 1);
+		if (nextLevel != null) {
+			stage.addAction(Actions.sequence(Actions.fadeOut(1.25f), Actions.run(new Runnable() {
+				@Override
+				public void run() {
+					// save progress if this is the highest level
+					// unlocked
+					SaveData.saveLevelsUnlocked(nextLevel.level);
+					SaveData.saveLevelScore(levelInfo.level, numDestroyed);
+					((Game) Gdx.app.getApplicationListener()).setScreen(new Play(nextLevel));
+				}
+			})));
+		} else {
+			// TODO go to a win screen
+			stage.addAction(Actions.sequence(Actions.fadeOut(1.25f), Actions.run(new Runnable() {
+				@Override
+				public void run() {
+					((Game) Gdx.app.getApplicationListener()).setScreen(new MainMenu());
+				}
+			})));
+		}
+	}
 }

@@ -1,5 +1,6 @@
 package org.nolat.explosions.entities;
 
+import org.nolat.explosions.Config;
 import org.nolat.explosions.utils.ShaderUtils;
 
 import com.badlogic.gdx.Gdx;
@@ -21,8 +22,8 @@ public class CompletionText extends Actor {
         failTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
         this.winTexture = new TextureRegion(winTexture);
         this.failTexture = new TextureRegion(failTexture);
-        setPosition(Gdx.graphics.getWidth() / 2 - winTexture.getWidth() / 2,
-                Gdx.graphics.getHeight() / 2 - winTexture.getHeight() / 2);
+        setPosition(Config.WIDTH / 2 - winTexture.getWidth() / 2,
+                Config.HEIGHT / 2 - winTexture.getHeight() / 2);
         setOrigin(winTexture.getWidth() / 2, winTexture.getHeight() / 2);
         setSize(winTexture.getWidth(), winTexture.getHeight());
         setScale(0f);

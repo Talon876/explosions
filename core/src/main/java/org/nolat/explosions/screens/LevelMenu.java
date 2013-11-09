@@ -70,14 +70,14 @@ public class LevelMenu implements Screen {
     @Override
     public void resize(int width, int height) {
         //        stage.setViewport(width, height, true);
-        stage.setViewport(Config.WIDTH, Config.HEIGHT, true);
+        stage.setViewport(Config.WIDTH, Config.HEIGHT, false);
         table.invalidateHierarchy();
     }
 
     @Override
     public void show() {
         ShaderUtils.init();
-        stage = new Stage(Config.WIDTH, Config.HEIGHT, true);
+        stage = new Stage(Config.WIDTH, Config.HEIGHT, false);
         //handle input processor
         Gdx.input.setInputProcessor(new InputMultiplexer(stage, new InputAdapter() {
             @Override

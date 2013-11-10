@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.Array;
 
@@ -71,7 +72,9 @@ public class InfoWidget extends Actor {
 			sr.setColor(new Color(0f, 1f, 0f, 0.05f));
 
 			sr.setColor(Color.YELLOW);
-			sr.line(getX(), getY(), getX() + avgVelocity.x * 25f, getY() + avgVelocity.y * 25f);
+			Vector3 point3 = new Vector3(getX(), getY(), 0);
+			getStage().getCamera().unproject(point3);
+			sr.line(point3.x, point3.y, point3.x + avgVelocity.x * 25f, point3.y + avgVelocity.y * 25f);
 
 			for (int i = 0; i < locations.size; i++) {
 				sr.line(locations.get(i).x, locations.get(i).y, locations.get(i).x + velocities.get(i).x * 300f,

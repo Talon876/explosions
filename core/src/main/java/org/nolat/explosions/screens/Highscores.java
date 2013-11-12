@@ -105,12 +105,14 @@ public class Highscores implements Screen {
 
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                stage.addAction(Actions.sequence(Actions.fadeOut(0.5f), Actions.run(new Runnable() {
-                    @Override
-                    public void run() {
-                        refreshScores();
-                    }
-                }), Actions.fadeIn(0.5f)));
+                if (stage.getRoot().getActions().size == 0) {
+                    stage.addAction(Actions.sequence(Actions.fadeOut(0.5f), Actions.run(new Runnable() {
+                        @Override
+                        public void run() {
+                            refreshScores();
+                        }
+                    }), Actions.fadeIn(0.5f)));
+                }
             }
         });
         refresh.pad(3f, 10f, 3f, 10f);

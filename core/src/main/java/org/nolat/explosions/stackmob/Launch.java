@@ -74,7 +74,6 @@ public class Launch extends StackMobModel {
         player.fetch(new StackMobCallback() {
             @Override
             public void success(String responseBody) {
-                System.out.println("incrementing player");
                 player.incrementTimesPlayed();
             }
 

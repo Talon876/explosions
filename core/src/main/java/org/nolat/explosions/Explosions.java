@@ -24,7 +24,7 @@ public class Explosions extends Game {
             backgroundMusic.play();
             setScreen(new Splash());
         } else { //if debugging go directly to level menu
-            System.out.println("StackMob v" + StackMob.getVersion());
+            Gdx.app.log("StackMob", "StackMob v" + StackMob.getVersion());
             setScreen(new LevelMenu());
         }
     }

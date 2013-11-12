@@ -1,7 +1,9 @@
 package org.nolat.explosions.stackmob;
 
 import org.nolat.explosions.Config;
+import org.nolat.explosions.utils.SaveData;
 
+import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
 import com.stackmob.sdk.callback.StackMobCallback;
 import com.stackmob.sdk.exception.StackMobException;
@@ -70,36 +72,61 @@ public class Launch extends StackMobModel {
     }
 
     public static void trackAppLaunch() {
-        final Player player = Player.getExistingPlayer();
-        player.fetch(new StackMobCallback() {
-            @Override
-            public void success(String responseBody) {
-                player.incrementTimesPlayed();
-            }
-
-            @Override
-            public void failure(StackMobException e) {
-                if (Config.debug) {
-                    Gdx.app.log("StackMob", "Player Fetch Fail: " + e.getMessage());
+        final String playerId = SaveData.getPlayerId(); //should only be null the first time this is ran
+        final Player player = new Player();
+        if (playerId != null) { //we already have a player id
+            player.setID(playerId);
+            player.fetch(new StackMobCallback() { //fetch player from server
+                @Override
+                public void success(String responseBody) {
+                    player.incrementTimesPlayed(); //increment times played
                 }
-            }
-        });
 
-        final Launch launch = Launch.createDefaultLaunch(player);
-        launch.save(new StackMobCallback() {
-            @Override
-            public void success(String responseBody) {
-                if (Config.debug) {
-                    Gdx.app.log("StackMob", "Successfully created Launch object with id: " + launch.getID());
+                @Override
+                public void failure(StackMobException e) {
+                    if (Config.debug) {
+                        Gdx.app.log("StackMob", "Player Fetch Fail: " + e.getMessage());
+                    }
                 }
-            }
+            });
+            final Launch launch = Launch.createDefaultLaunch(player); //setup launch info
+            launch.save(new StackMobCallback() {
+                @Override
+                public void success(String responseBody) {
+                    if (Config.debug) {
+                        Gdx.app.log("StackMob", "Successfully created Launch object with id: " + launch.getID());
+                    }
+                }
 
-            @Override
-            public void failure(StackMobException e) {
-                if (Config.debug) {
-                    Gdx.app.log("StackMob", "Launch Save Fail: " + e.getMessage());
+                @Override
+                public void failure(StackMobException e) {
+                    if (Config.debug) {
+                        Gdx.app.log("StackMob", "Launch Save Fail: " + e.getMessage());
+                    }
                 }
+            });
+        } else { //player id is null, create a new player
+            if (Gdx.app.getType() == ApplicationType.Desktop) {
+                player.setName(System.getProperty("user.name"));
             }
-        });
+            player.save(new StackMobCallback() { //save player to server
+                @Override
+                public void success(String responseBody) {
+                    if (Config.debug) {
+                        Gdx.app.log("StackMob", "Created new player with id: " + player.getID());
+                        SaveData.savePlayerId(player.getID()); //now we have an id
+                        final Launch launch = Launch.createDefaultLaunch(player);
+                        launch.save();
+                    }
+                }
+
+                @Override
+                public void failure(StackMobException e) {
+                    if (Config.debug) {
+                        Gdx.app.log("StackMob", "Failed to create a new player. No internet connection?");
+                    }
+                }
+            });
+        }
     }
 }

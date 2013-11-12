@@ -3,10 +3,7 @@ package org.nolat.explosions.stackmob;
 import org.nolat.explosions.Config;
 import org.nolat.explosions.utils.SaveData;
 
-import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
-import com.stackmob.sdk.callback.StackMobCallback;
-import com.stackmob.sdk.exception.StackMobException;
 import com.stackmob.sdk.model.StackMobModel;
 
 public class Player extends StackMobModel {
@@ -46,8 +43,6 @@ public class Player extends StackMobModel {
     /**
      * Gets the existing player who's id is saved in the preferences. If one does not exist, one is created and sent to the server.<br>
      * 
-     * @param cb
-     *            the callback that is executed upon completion
      * @return a Player object with the correct id. It will need to be refreshed from the server before performing operations on its data.
      */
     public static Player getExistingPlayer() {
@@ -55,26 +50,6 @@ public class Player extends StackMobModel {
         final Player player = new Player();
         if (playerId != null) { //we have a player id, fetch full object from server
             player.setID(playerId);
-        } else { //we don't have an id, create a new player and save with server
-            if (Gdx.app.getType() == ApplicationType.Desktop) {
-                player.setName(System.getProperty("user.name"));
-            }
-            player.save(new StackMobCallback() {
-                @Override
-                public void success(String responseBody) {
-                    if (Config.debug) {
-                        Gdx.app.log("StackMob", "Created new player with id: " + player.getID());
-                        SaveData.savePlayerId(player.getID());
-                    }
-                }
-
-                @Override
-                public void failure(StackMobException e) {
-                    if (Config.debug) {
-                        Gdx.app.log("StackMob", "Failed to create a new player. No internet connection?");
-                    }
-                }
-            });
         }
         return player;
     }

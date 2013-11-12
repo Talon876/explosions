@@ -7,6 +7,8 @@ import org.nolat.explosions.stackmob.Player;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.math.MathUtils;
+import com.stackmob.sdk.callback.StackMobCallback;
+import com.stackmob.sdk.exception.StackMobException;
 
 public class SaveData {
 
@@ -31,13 +33,22 @@ public class SaveData {
      * @param level
      *            the level to save
      */
-    public static void saveLevelsUnlocked(int level) {
+    public static void saveLevelsUnlocked(final int level) {
         if (getLevelsUnlocked() < level) {
             prefs.putInteger(LEVELS_UNLOCKED, level);
             prefs.flush();
             final Player player = Player.getExistingPlayer();
-            player.setLevelsComplete(level);
-            player.save();
+            player.fetch(new StackMobCallback() {
+                @Override
+                public void success(String responseBody) {
+                    player.setLevelsComplete(level);
+                    player.save();
+                }
+
+                @Override
+                public void failure(StackMobException e) {
+                }
+            });
         }
     }
 

@@ -6,6 +6,14 @@ Explosions
 
 A chain reaction game with some secrets.
 
+Screenshots
+-----------
+![Main Menu](http://i.imgur.com/ekoItz1.png)
+
+![Levels](http://i.imgur.com/x4sCUnq.png)
+
+![Gameplay](http://i.imgur.com/jsmxr6I.png)
+
 Eclipse Setup
 -------------
 Clone the repository to your eclipse workspace and open a shell window to this folder.

@@ -14,6 +14,17 @@ Screenshots
 
 ![Gameplay](http://i.imgur.com/jsmxr6I.png)
 
+Changelog
+---------
+*  Version 0.8.2
+    * Added 3 "star" info to level select screen
+    * Added score to highscores in addition to levels complete
+    * fixed issue where last level wouldn't save the score
+    * reduced popping volume
+*  Version 0.8.1
+    * first big release
+    * online highscores
+
 Eclipse Setup
 -------------
 Clone the repository to your eclipse workspace and open a shell window to this folder.

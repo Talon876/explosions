@@ -98,7 +98,7 @@ public class Explosion extends Actor {
                             @Override
                             public void run() {
                                 if (dieFx != null) {
-                                    dieFx.play();
+                                    dieFx.play(0.55f);
                                 }
                                 explodeEffect.dispose();
                                 confettiTrail.dispose();

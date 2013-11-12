@@ -259,13 +259,14 @@ public class Play implements Screen {
 
     private void advanceToNextLevel() {
         final LevelInfo nextLevel = LevelInfo.getLevelInfo(levelInfo.level + 1);
+        // save level score
+        SaveData.saveLevelScore(levelInfo.level, numDestroyed);
         if (nextLevel != null) {
             stage.addAction(Actions.sequence(Actions.fadeOut(1.25f), Actions.run(new Runnable() {
                 @Override
                 public void run() {
-                    // save progress if this is the highest level unlocked
+                    //only save next level if it exists
                     SaveData.saveLevelsUnlocked(nextLevel.level);
-                    SaveData.saveLevelScore(levelInfo.level, numDestroyed);
                     ((Game) Gdx.app.getApplicationListener()).setScreen(new Play(nextLevel));
                 }
             })));

@@ -5,6 +5,7 @@ import java.util.HashMap;
 import org.nolat.explosions.LevelInfo;
 import org.nolat.explosions.utils.ColorUtils;
 import org.nolat.explosions.utils.PagedScrollPane;
+import org.nolat.explosions.utils.SaveData;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
@@ -24,10 +25,11 @@ import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 public class LevelSelectron extends Group {
-    private static final int BUTTONS_PER_ROW = 7, BUTTONS_PER_PAGE = 35;
+    private static final int BUTTONS_PER_ROW = 7, BUTTONS_PER_PAGE = 35, MAX_STARS = 3;
 
     private final BitmapFont font;
     private final Texture buttonTexture;
+    private final Texture hollowTexture;
     private final Skin skin;
     private final ClickListener buttonListener;
     private final int levelsUnlocked;
@@ -41,10 +43,11 @@ public class LevelSelectron extends Group {
 
     private final PagedScrollPane pagedScrollArea;
 
-    public LevelSelectron(BitmapFont font, Texture buttonTexture, Skin skin, int levelsUnlocked,
+    public LevelSelectron(BitmapFont font, Texture buttonTexture, Texture hollowTexture, Skin skin, int levelsUnlocked,
             ClickListener buttonListener) {
         this.font = font;
         this.buttonTexture = buttonTexture;
+        this.hollowTexture = hollowTexture;
         this.skin = skin;
         this.levelsUnlocked = levelsUnlocked;
         this.buttonListener = buttonListener;
@@ -68,7 +71,7 @@ public class LevelSelectron extends Group {
         for (int i = 0; i < getButtonAmount(); i++) {
             if (i % BUTTONS_PER_PAGE == 0) { //pages should have 35 buttons (5 rows)
                 levelPage = new Table().pad(0f);
-                levelPage.defaults().pad(15f, 25f, 15f, 25f);
+                levelPage.defaults().pad(15f, 25f, 0f, 25f);
                 pagedScrollArea.addPage(levelPage);
             }
             if (i % BUTTONS_PER_ROW == 0) {
@@ -133,6 +136,32 @@ public class LevelSelectron extends Group {
                 }
             });
             button.addListener(buttonListener);
+
+            //calculate "star" information
+            final LevelInfo levelData = LevelInfo.getLevelInfo(level);
+            float maxDiff = levelData.numTotal - levelData.numNeededToPass;
+            float earnedDiff = SaveData.getLevelScore(level) - levelData.numNeededToPass;
+            float perCent = earnedDiff / maxDiff;
+            int stars = 0;
+            if (perCent <= 0.20f) {
+                stars = 1;
+            } else if (perCent <= 0.60f) {
+                stars = 2;
+            } else {
+                stars = 3;
+            }
+            Table starTable = new Table();
+            starTable.defaults().pad(2f);
+            if (stars >= 1) {
+                for (int star = 0; star < MAX_STARS; star++) {
+                    Image image = new Image((stars > star) ? buttonTexture : hollowTexture);
+                    image.setColor(buttonImage.getColor());
+                    starTable.add(image).width(16f).height(16f);
+                }
+            }
+            button.row();
+            button.add(starTable).height(25f);
+
         } else if (level <= LevelInfo.getNumberOfLevels() - 1) {
             buttonImage.setColor(new Color(0.75f, 0.75f, 0.75f, 1)); //existing levels, but are locked
         } else { //levels that don't exist that are used for keeping the layout, make them invisible

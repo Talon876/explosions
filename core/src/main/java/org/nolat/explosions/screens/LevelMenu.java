@@ -110,16 +110,19 @@ public class LevelMenu implements Screen {
         labelStyle.fontColor = Color.BLACK;
         skin.add("default", labelStyle, LabelStyle.class);
 
+
         Texture levelButtonTexture = new Texture("images/disc256.png");
-        levelSelectron = new LevelSelectron(levelSelectFont, levelButtonTexture, skin, SaveData.getLevelsUnlocked(),
-                new ClickListener() {
+        Texture hollowTexture = new Texture("images/disc256-hollow.png");
+        levelSelectron = new LevelSelectron(levelSelectFont, levelButtonTexture, hollowTexture, skin,
+                SaveData.getLevelsUnlocked(), new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                //TODO make it so this can be null and/or re-evaluate if it's needed
-                //possibly load score info and show it under the selectron
+                int level = Integer.parseInt(event.getListenerActor().getName());
+
             }
         });
         levelSelectron.setSelectedLevel(selected);
+
 
         TextButtonStyle buttonStyle = skin.get("default", TextButtonStyle.class);
         buttonStyle.font = buttonFont;
@@ -167,7 +170,7 @@ public class LevelMenu implements Screen {
         back.pad(3f, 10f, 3f, 10f);
 
         //putting stuff together
-        table.add("Select Level").colspan(3).expandX().spaceBottom(25).row();
+        table.add("Select Level").colspan(3).expandX().spaceBottom(5f).row();
 
         table.add(back).size(210f, 76f).uniformX().bottom().left().padLeft(28).padBottom(20);
         table.add(levelSelectron.getSelectron()).expand().top();
@@ -176,6 +179,17 @@ public class LevelMenu implements Screen {
         stage.addActor(table);
 
         stage.addAction(Actions.sequence(Actions.alpha(0), Actions.fadeIn(0.5f)));
+    }
+
+    private String getLevelDataString(int level) {
+        LevelInfo info = LevelInfo.getLevelInfo(level);
+        int score = SaveData.getLevelScore(level);
+        String scoreInfo = String.format("Destroyed %d / Needed %d / Total %d", score, info.numNeededToPass,
+                info.numTotal);
+        if (Config.debug) {
+            Gdx.app.log("Score", "Level " + level + ": " + scoreInfo);
+        }
+        return scoreInfo;
     }
 
     @Override

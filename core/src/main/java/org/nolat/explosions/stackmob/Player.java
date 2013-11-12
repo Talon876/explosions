@@ -13,6 +13,7 @@ public class Player extends StackMobModel {
     private String name;
     private int timesPlayed;
     private boolean hasKonami;
+    private int levelsComplete;
 
     public Player(String name, int timesPlayed, boolean hasKonami) {
         super(Player.class);
@@ -89,4 +90,13 @@ public class Player extends StackMobModel {
     public void setName(String name) {
         this.name = name;
     }
+
+    public int getLevelsComplete() {
+        return levelsComplete;
+    }
+
+    public void setLevelsComplete(int levelsComplete) {
+        this.levelsComplete = levelsComplete;
+    }
+
 }

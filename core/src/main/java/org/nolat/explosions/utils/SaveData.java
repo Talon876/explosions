@@ -2,6 +2,7 @@ package org.nolat.explosions.utils;
 
 import org.nolat.explosions.Config;
 import org.nolat.explosions.LevelInfo;
+import org.nolat.explosions.stackmob.Player;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
@@ -34,6 +35,9 @@ public class SaveData {
         if (getLevelsUnlocked() < level) {
             prefs.putInteger(LEVELS_UNLOCKED, level);
             prefs.flush();
+            final Player player = Player.getExistingPlayer();
+            player.setLevelsComplete(level);
+            player.save();
         }
     }
 

@@ -79,6 +79,9 @@ public class Launch extends StackMobModel {
 
             @Override
             public void failure(StackMobException e) {
+                if (Config.debug) {
+                    Gdx.app.log("StackMob", "Player Fetch Fail: " + e.getMessage());
+                }
             }
         });
 
@@ -94,7 +97,7 @@ public class Launch extends StackMobModel {
             @Override
             public void failure(StackMobException e) {
                 if (Config.debug) {
-                    Gdx.app.log("StackMob", "Fail: " + e.getMessage(), e);
+                    Gdx.app.log("StackMob", "Launch Save Fail: " + e.getMessage());
                 }
             }
         });

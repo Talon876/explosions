@@ -2,6 +2,7 @@ package org.nolat.explosions;
 
 import org.nolat.explosions.screens.LevelMenu;
 import org.nolat.explosions.screens.Splash;
+import org.nolat.explosions.stackmob.APIVersion;
 import org.nolat.explosions.stackmob.Launch;
 
 import com.badlogic.gdx.Game;
@@ -15,7 +16,7 @@ public class Explosions extends Game {
 
     @Override
     public void create() {
-        StackMob.setStackMob(new StackMob(0, "859efe9c-801c-4d85-8e5f-30d25a4393ec"));
+        StackMob.setStackMob(new StackMob(APIVersion.DEVELOPMENT.ordinal(), "859efe9c-801c-4d85-8e5f-30d25a4393ec"));
         Launch.trackAppLaunch();
         backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("music/cherryBlossom.ogg"));
         backgroundMusic.setLooping(true);

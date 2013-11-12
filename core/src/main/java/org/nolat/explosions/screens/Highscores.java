@@ -94,21 +94,26 @@ public class Highscores implements Screen {
 
         TextButtonStyle buttonStyle = skin.get("default", TextButtonStyle.class);
         buttonStyle.font = buttonFont;
-        final TextButton save = new TextButton("Refresh", buttonStyle);
-        save.addListener(new ClickListener() {
+        final TextButton refresh = new TextButton("Refresh", buttonStyle);
+        refresh.addListener(new ClickListener() {
             @Override
             public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                if (save.getColor().a >= 1f) {
+                if (refresh.getColor().a >= 1f) {
                     rolloverSfx.play();
                 }
             }
 
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                refreshScores();
+                stage.addAction(Actions.sequence(Actions.fadeOut(0.5f), Actions.run(new Runnable() {
+                    @Override
+                    public void run() {
+                        refreshScores();
+                    }
+                }), Actions.fadeIn(0.5f)));
             }
         });
-        save.pad(3f, 10f, 3f, 10f);
+        refresh.pad(3f, 10f, 3f, 10f);
 
         final TextButton back = new TextButton("Back", buttonStyle);
         back.addListener(new ClickListener() {
@@ -132,13 +137,13 @@ public class Highscores implements Screen {
         back.pad(3f, 10f, 3f, 10f);
 
         highscoreTable = new Table(skin);
-        //        refreshScores();
+        refreshScores();
 
         //putting stuff together
         table.add("Highscores").colspan(3).expandX().spaceBottom(25).row();
         table.add(back).size(210f, 76f).uniformX().bottom().left().padLeft(28).padBottom(20);
         table.add(highscoreTable).expand().fillX().top();
-        table.add(save).size(210f, 76f).uniformX().bottom().right().padRight(28).padBottom(20);
+        table.add(refresh).size(210f, 76f).uniformX().bottom().right().padRight(28).padBottom(20);
         stage.addActor(table);
 
         stage.addAction(Actions.sequence(Actions.alpha(0), Actions.fadeIn(0.5f)));
@@ -163,16 +168,14 @@ public class Highscores implements Screen {
     }
 
     private void refreshScores() {
-        stage.addAction(Actions.sequence(Actions.fadeOut(0.5f), Actions.run(new Runnable() {
-            @Override
-            public void run() {
-                Player.query(Player.class, new StackMobQuery().fieldIsGreaterThan("levelsComplete", 5)
-                        .fieldIsOrderedBy("levelsComplete", Ordering.DESCENDING).isInRange(0, 15),
-                        new StackMobQueryCallback<Player>() {
+        Player.query(
+                Player.class,
+                new StackMobQuery().fieldIsGreaterThan("levelsComplete", 5)
+                .fieldIsOrderedBy("levelsComplete", Ordering.DESCENDING).isInRange(0, 15),
+                new StackMobQueryCallback<Player>() {
                     @Override
                     public void success(List<Player> result) {
                         refreshTable(result);
-                        stage.addAction(Actions.fadeIn(0.5f));
                     }
 
                     @Override
@@ -180,8 +183,6 @@ public class Highscores implements Screen {
                         refreshTable(null);
                     }
                 });
-            }
-        })));
     }
 
     @Override

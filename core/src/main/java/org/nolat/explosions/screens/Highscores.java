@@ -156,6 +156,7 @@ public class Highscores implements Screen {
         highscoreTable.add("#", "settings").center().expandX();
         highscoreTable.add("Name", "settings").center().expandX();
         highscoreTable.add("Levels Complete", "settings").center().expandX();
+        highscoreTable.add("Score", "settings").center().expandX();
         highscoreTable.row();
         if (players != null) {
             int rank = 1;
@@ -163,6 +164,7 @@ public class Highscores implements Screen {
                 highscoreTable.add(Integer.toString(rank++), "settings").center();
                 highscoreTable.add(p.getName(), "settings").center();
                 highscoreTable.add(Integer.toString(p.getLevelsComplete()), "settings").center();
+                highscoreTable.add(Integer.toString(p.getScore()), "settings").center();
                 highscoreTable.row();
             }
             highscoreTable.invalidateHierarchy();
@@ -173,7 +175,8 @@ public class Highscores implements Screen {
         Player.query(
                 Player.class,
                 new StackMobQuery().fieldIsGreaterThan("levelsComplete", 5)
-                .fieldIsOrderedBy("levelsComplete", Ordering.DESCENDING).isInRange(0, 15),
+                .fieldIsOrderedBy("levelsComplete", Ordering.DESCENDING)
+                .fieldIsOrderedBy("score", Ordering.DESCENDING).isInRange(0, 15),
                 new StackMobQueryCallback<Player>() {
                     @Override
                     public void success(List<Player> result) {

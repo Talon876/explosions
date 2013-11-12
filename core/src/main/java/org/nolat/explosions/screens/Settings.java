@@ -51,7 +51,6 @@ public class Settings implements Screen {
 
         stage.act(delta);
         stage.draw();
-        Table.drawDebug(stage);
     }
 
     @Override
@@ -78,7 +77,6 @@ public class Settings implements Screen {
 
         table = new Table(skin);
         table.setFillParent(true);
-        table.debug();
 
         //fonts
         settingsFont = FontUtils.generateFont("fonts/square.ttf", 36, Color.WHITE);
@@ -107,7 +105,6 @@ public class Settings implements Screen {
 
         //settings tables
         Table settingsTable = new Table(skin);
-        settingsTable.debug();
         settingsTable.add("Highscore Name", "settings").pad(10f).left();
         settingsTable.add(nameField).pad(10f).right().expand().fillX();
 

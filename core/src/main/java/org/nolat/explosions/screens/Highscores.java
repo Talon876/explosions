@@ -1,6 +1,9 @@
 package org.nolat.explosions.screens;
 
+import java.util.List;
+
 import org.nolat.explosions.Config;
+import org.nolat.explosions.stackmob.Player;
 import org.nolat.explosions.utils.FontUtils;
 
 import com.badlogic.gdx.Game;
@@ -23,6 +26,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.stackmob.sdk.api.StackMobQuery;
+import com.stackmob.sdk.api.StackMobQuery.Ordering;
+import com.stackmob.sdk.callback.StackMobQueryCallback;
+import com.stackmob.sdk.exception.StackMobException;
 
 public class Highscores implements Screen {
 
@@ -34,6 +41,8 @@ public class Highscores implements Screen {
     private BitmapFont settingsFont;
     private BitmapFont buttonFont;
     private BitmapFont titleFont;
+
+    private Table highscoreTable;
 
     @Override
     public void render(float delta) {
@@ -78,6 +87,11 @@ public class Highscores implements Screen {
         labelStyle.fontColor = Color.BLACK;
         skin.add("default", labelStyle, LabelStyle.class);
 
+        LabelStyle settingsLabelStyle = skin.get("settings", LabelStyle.class);
+        settingsLabelStyle.font = settingsFont;
+        settingsLabelStyle.fontColor = Color.BLACK;
+        skin.add("settings", settingsLabelStyle, LabelStyle.class);
+
         TextButtonStyle buttonStyle = skin.get("default", TextButtonStyle.class);
         buttonStyle.font = buttonFont;
         final TextButton save = new TextButton("Refresh", buttonStyle);
@@ -91,12 +105,7 @@ public class Highscores implements Screen {
 
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                stage.addAction(Actions.sequence(Actions.fadeOut(0.5f), Actions.run(new Runnable() {
-                    @Override
-                    public void run() {
-                        //TODO refresh highscores
-                    }
-                }), Actions.fadeIn(0.5f)));
+                refreshScores();
             }
         });
         save.pad(3f, 10f, 3f, 10f);
@@ -122,16 +131,57 @@ public class Highscores implements Screen {
         });
         back.pad(3f, 10f, 3f, 10f);
 
+        highscoreTable = new Table(skin);
+        //        refreshScores();
+
         //putting stuff together
         table.add("Highscores").colspan(3).expandX().spaceBottom(25).row();
-
         table.add(back).size(210f, 76f).uniformX().bottom().left().padLeft(28).padBottom(20);
-        table.add().expand().top();
+        table.add(highscoreTable).expand().fillX().top();
         table.add(save).size(210f, 76f).uniformX().bottom().right().padRight(28).padBottom(20);
-
         stage.addActor(table);
 
         stage.addAction(Actions.sequence(Actions.alpha(0), Actions.fadeIn(0.5f)));
+    }
+
+    private void refreshTable(List<Player> players) {
+        highscoreTable.clear();
+        highscoreTable.add("#", "settings").center().expandX();
+        highscoreTable.add("Name", "settings").center().expandX();
+        highscoreTable.add("Levels Complete", "settings").center().expandX();
+        highscoreTable.row();
+        if (players != null) {
+            int rank = 1;
+            for (Player p : players) {
+                highscoreTable.add(Integer.toString(rank++), "settings").center();
+                highscoreTable.add(p.getName(), "settings").center();
+                highscoreTable.add(Integer.toString(p.getLevelsComplete()), "settings").center();
+                highscoreTable.row();
+            }
+        }
+        highscoreTable.invalidateHierarchy();
+    }
+
+    private void refreshScores() {
+        stage.addAction(Actions.sequence(Actions.fadeOut(0.5f), Actions.run(new Runnable() {
+            @Override
+            public void run() {
+                Player.query(Player.class, new StackMobQuery().fieldIsGreaterThan("levelsComplete", 5)
+                        .fieldIsOrderedBy("levelsComplete", Ordering.DESCENDING).isInRange(0, 15),
+                        new StackMobQueryCallback<Player>() {
+                    @Override
+                    public void success(List<Player> result) {
+                        refreshTable(result);
+                        stage.addAction(Actions.fadeIn(0.5f));
+                    }
+
+                    @Override
+                    public void failure(StackMobException e) {
+                        refreshTable(null);
+                    }
+                });
+            }
+        })));
     }
 
     @Override

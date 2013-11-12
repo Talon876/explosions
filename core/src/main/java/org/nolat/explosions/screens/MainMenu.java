@@ -7,6 +7,7 @@ import org.nolat.explosions.stackmob.Player;
 import org.nolat.explosions.tween.ActorAccessor;
 import org.nolat.explosions.utils.FontUtils;
 import org.nolat.explosions.utils.InputAdapter;
+import org.nolat.explosions.utils.SaveData;
 
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
@@ -74,6 +75,11 @@ public class MainMenu implements Screen {
 
     @Override
     public void show() {
+        //refresh score
+        if (Config.debug) {
+            Gdx.app.log("StackMob", "Score: " + SaveData.getTotalScore());
+        }
+        SaveData.saveTotalScore(SaveData.getTotalScore());
         stage = new Stage(Config.WIDTH, Config.HEIGHT, false);
         rolloverSfx = Gdx.audio.newSound(Gdx.files.internal("sfx/rollover.ogg"));
         badingSfx = Gdx.audio.newSound(Gdx.files.internal("sfx/bading.ogg"));

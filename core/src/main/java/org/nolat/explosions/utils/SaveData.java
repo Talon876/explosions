@@ -63,7 +63,7 @@ public class SaveData {
     }
 
     /**
-     * Saves the score only if it was higher than the previous
+     * Saves the score only if it was higher than the previous and updates global total high score
      * 
      * @param level
      *            level to save score for
@@ -74,6 +74,7 @@ public class SaveData {
         if (getLevelScore(level) < score) {
             prefs.putInteger(LEVEL_DATA + level, score);
             prefs.flush();
+            SaveData.saveTotalScore(SaveData.getTotalScore());
         }
     }
 
@@ -106,7 +107,42 @@ public class SaveData {
         prefs.flush();
     }
 
-    private SaveData() {
+    /**
+     * Calculates the total score
+     * 
+     * @return the total score
+     */
+    public static int getTotalScore() {
+        int score = 0;
+        for (int i = 0; i < LevelInfo.getNumberOfLevels(); i++) {
+            score += getLevelScore(i);
+        }
+        return score;
     }
 
+    /**
+     * Saves the total score if the score on the server is lower
+     * 
+     * @param score
+     *            the new score
+     */
+    public static void saveTotalScore(final int score) {
+        final Player player = Player.getExistingPlayer();
+        player.fetch(new StackMobCallback() {
+            @Override
+            public void success(String responseBody) {
+                if (player.getScore() < score) {
+                    player.setScore(score);
+                    player.save();
+                }
+            }
+
+            @Override
+            public void failure(StackMobException e) {
+            }
+        });
+    }
+
+    private SaveData() {
+    }
 }

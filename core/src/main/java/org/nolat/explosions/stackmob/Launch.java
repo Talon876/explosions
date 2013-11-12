@@ -87,6 +87,7 @@ public class Launch extends StackMobModel {
                     if (Config.debug) {
                         Gdx.app.log("StackMob", "Player Fetch Fail: " + e.getMessage());
                     }
+                    SaveData.deletePlayerId();
                 }
             });
             final Launch launch = Launch.createDefaultLaunch(player); //setup launch info
@@ -109,15 +110,16 @@ public class Launch extends StackMobModel {
             if (Gdx.app.getType() == ApplicationType.Desktop) {
                 player.setName(System.getProperty("user.name"));
             }
+
             player.save(new StackMobCallback() { //save player to server
                 @Override
                 public void success(String responseBody) {
                     if (Config.debug) {
                         Gdx.app.log("StackMob", "Created new player with id: " + player.getID());
-                        SaveData.savePlayerId(player.getID()); //now we have an id
-                        final Launch launch = Launch.createDefaultLaunch(player);
-                        launch.save();
                     }
+                    final Launch launch = Launch.createDefaultLaunch(player);
+                    launch.save();
+                    SaveData.savePlayerId(player.getID()); //now we have an id
                 }
 
                 @Override

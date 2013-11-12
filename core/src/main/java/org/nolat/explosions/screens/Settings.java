@@ -186,7 +186,6 @@ public class Settings implements Screen {
                     Gdx.app.debug("StackMob",
                             "Error retrieving player information for " + player.getID() + ": " + e.getMessage());
                 }
-                ((Game) Gdx.app.getApplicationListener()).setScreen(new MainMenu());
             }
         });
     }

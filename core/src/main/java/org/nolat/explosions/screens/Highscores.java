@@ -163,8 +163,8 @@ public class Highscores implements Screen {
                 highscoreTable.add(Integer.toString(p.getLevelsComplete()), "settings").center();
                 highscoreTable.row();
             }
+            highscoreTable.invalidateHierarchy();
         }
-        highscoreTable.invalidateHierarchy();
     }
 
     private void refreshScores() {
@@ -180,6 +180,7 @@ public class Highscores implements Screen {
 
                     @Override
                     public void failure(StackMobException e) {
+                        e.printStackTrace();
                         refreshTable(null);
                     }
                 });

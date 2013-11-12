@@ -10,7 +10,8 @@
     "com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle": {
     	"default": { "fontColor": "white" },
         "levelButtons": {"fontColor": "black"},
-        "settings": {"fontColor": "black"}
+        "settings": {"fontColor": "black"},
+        "text": {"fontColor": "black"}
     },
     "com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle": {
     	"default" : {

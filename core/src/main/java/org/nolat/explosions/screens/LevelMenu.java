@@ -18,12 +18,14 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.BitmapFont.TextBounds;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -38,6 +40,7 @@ public class LevelMenu implements Screen {
     private Skin skin;
     private Sound rolloverSfx;
 
+    private BitmapFont textFont;
     private BitmapFont levelSelectFont;
     private BitmapFont buttonFont;
     private BitmapFont titleFont;
@@ -101,6 +104,7 @@ public class LevelMenu implements Screen {
         table = new Table(skin);
         table.setFillParent(true);
 
+        textFont = FontUtils.generateFont("fonts/minecraftia.ttf", 22, Color.BLACK);
         levelSelectFont = FontUtils.generateFont("fonts/square.ttf", 36, Color.WHITE);
         buttonFont = FontUtils.generateFont("fonts/square.ttf", 42, Color.WHITE);
         titleFont = FontUtils.generateFont("fonts/square.ttf", 90, Color.BLACK);
@@ -110,6 +114,14 @@ public class LevelMenu implements Screen {
         labelStyle.fontColor = Color.BLACK;
         skin.add("default", labelStyle, LabelStyle.class);
 
+        LabelStyle textLabelStyle = skin.get("text", LabelStyle.class);
+        textLabelStyle.font = textFont;
+        skin.add("text", textLabelStyle, LabelStyle.class);
+
+        //absolute positioning for level data
+        final Label levelData = new Label(getLevelDataString(selected), skin, "text");
+        TextBounds size = textFont.getBounds(getLevelDataString(selected));
+        levelData.setPosition(Config.WIDTH / 2 - size.width / 2, 0 + size.height * 1.83f);
 
         Texture levelButtonTexture = new Texture("images/disc256.png");
         Texture hollowTexture = new Texture("images/disc256-hollow.png");
@@ -118,11 +130,12 @@ public class LevelMenu implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 int level = Integer.parseInt(event.getListenerActor().getName());
-
+                levelData.setText(getLevelDataString(level));
+                TextBounds size = textFont.getBounds(getLevelDataString(level));
+                levelData.setPosition(Config.WIDTH / 2 - size.width / 2, 0 + size.height * 1.83f);
             }
         });
         levelSelectron.setSelectedLevel(selected);
-
 
         TextButtonStyle buttonStyle = skin.get("default", TextButtonStyle.class);
         buttonStyle.font = buttonFont;
@@ -177,6 +190,7 @@ public class LevelMenu implements Screen {
         table.add(play).size(210f, 76f).uniformX().bottom().right().padRight(28).padBottom(20);
 
         stage.addActor(table);
+        stage.addActor(levelData);
 
         stage.addAction(Actions.sequence(Actions.alpha(0), Actions.fadeIn(0.5f)));
     }
@@ -212,6 +226,7 @@ public class LevelMenu implements Screen {
         stage.dispose();
         skin.dispose();
         rolloverSfx.dispose();
+        textFont.dispose();
         levelSelectFont.dispose();
         titleFont.dispose();
         buttonFont.dispose();

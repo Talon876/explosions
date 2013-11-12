@@ -14,6 +14,8 @@ public class SaveData {
     private static final String LEVELS_UNLOCKED = "unlocked";
     private static final String LEVEL_DATA = "level_data_"; //append level # when using
 
+    private static final String PLAYER_ID = "player_id";
+
     /**
      * 
      * @return the number of levels unlocked, clamped between 0 and the max value
@@ -58,6 +60,35 @@ public class SaveData {
             prefs.putInteger(LEVEL_DATA + level, score);
             prefs.flush();
         }
+    }
+
+    /**
+     * Saves the player id
+     * 
+     * @param playerId
+     *            the player id to save
+     */
+    public static void savePlayerId(String playerId) {
+        prefs.putString(PLAYER_ID, playerId);
+        prefs.flush();
+    }
+
+    /**
+     * Gets the player id if it exists
+     * 
+     * @return the player id if it exists, otherwise returns null
+     */
+    public static String getPlayerId() {
+        return prefs.getString(PLAYER_ID, null);
+    }
+
+    /**
+     * Removes the player id from the save file after saving the id in a backup key called "PLAYER_ID" + "_backup"
+     */
+    public static void deletePlayerId() {
+        prefs.putString(PLAYER_ID + "_backup", getPlayerId());
+        prefs.remove(PLAYER_ID);
+        prefs.flush();
     }
 
     private SaveData() {

@@ -30,23 +30,10 @@ public class LevelInfo {
                     tmp.get(i).setLevel(lvl);
                     levelData.put(lvl, tmp.get(i));
                     lvl++;
-                } else {
-                    System.out.println("Discarded " + tmp.get(i) + " for being a duplicate");
-                }
-
-            } else {
-                if (Config.debug) {
-                    System.out.println("Discarded " + tmp.get(i) + " for having " + perCent);
                 }
             }
         }
 
-        if (Config.debug) {
-            System.out.println("\n--Levels--");
-            for (LevelInfo li : getAllLevels()) {
-                System.out.println(li);
-            }
-        }
     }
 
     public static List<LevelInfo> getAllLevels() {

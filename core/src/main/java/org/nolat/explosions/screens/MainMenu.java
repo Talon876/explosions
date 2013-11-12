@@ -3,6 +3,7 @@ package org.nolat.explosions.screens;
 import org.nolat.explosions.Config;
 import org.nolat.explosions.KonamiInputDetector;
 import org.nolat.explosions.entities.Explosion;
+import org.nolat.explosions.stackmob.Player;
 import org.nolat.explosions.tween.ActorAccessor;
 import org.nolat.explosions.utils.FontUtils;
 import org.nolat.explosions.utils.InputAdapter;
@@ -42,276 +43,280 @@ import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.ui.Window.WindowStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.stackmob.sdk.callback.StackMobCallback;
+import com.stackmob.sdk.exception.StackMobException;
 
 public class MainMenu implements Screen {
 
-	private Stage stage;
-	private Skin skin;
-	private Table table;
-	private BitmapFont buttonFont, titleFont, textFont;
-	private TweenManager tweenManager;
+    private Stage stage;
+    private Skin skin;
+    private Table table;
+    private BitmapFont buttonFont, titleFont, textFont;
+    private TweenManager tweenManager;
 
-	private Sound rolloverSfx, badingSfx;
+    private Sound rolloverSfx, badingSfx;
 
-	@Override
-	public void render(float delta) {
-		Gdx.gl.glClearColor(0, 0, 0, 1);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+    @Override
+    public void render(float delta) {
+        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-		stage.act(delta);
-		stage.draw();
+        stage.act(delta);
+        stage.draw();
 
-		tweenManager.update(delta);
-	}
+        tweenManager.update(delta);
+    }
 
-	@Override
-	public void resize(int width, int height) {
-		// stage.setViewport(width, height, true);
-		stage.setViewport(Config.WIDTH, Config.HEIGHT, false);
-		table.invalidateHierarchy();
-	}
+    @Override
+    public void resize(int width, int height) {
+        stage.setViewport(Config.WIDTH, Config.HEIGHT, false);
+        table.invalidateHierarchy();
+    }
 
-	@Override
-	public void show() {
-		stage = new Stage(Config.WIDTH, Config.HEIGHT, false);
-		rolloverSfx = Gdx.audio.newSound(Gdx.files.internal("sfx/rollover.ogg"));
-		badingSfx = Gdx.audio.newSound(Gdx.files.internal("sfx/bading.ogg"));
+    @Override
+    public void show() {
+        stage = new Stage(Config.WIDTH, Config.HEIGHT, false);
+        rolloverSfx = Gdx.audio.newSound(Gdx.files.internal("sfx/rollover.ogg"));
+        badingSfx = Gdx.audio.newSound(Gdx.files.internal("sfx/bading.ogg"));
 
-		// setup background
-		Texture backgroundTexture = new Texture("backgrounds/title.png");
-		Image background = new Image(backgroundTexture);
-		background.setPosition(0, 0);
-		background.setFillParent(true);
-		stage.addActor(background);
+        // setup background
+        Texture backgroundTexture = new Texture("backgrounds/title.png");
+        Image background = new Image(backgroundTexture);
+        background.setPosition(0, 0);
+        background.setFillParent(true);
+        stage.addActor(background);
 
-		// create group for explosions and add now so they're under the UI
-		final Group explosionsGroup = new Group();
-		explosionsGroup.getColor().a = 0f; // invisible, will tween in
-		stage.addActor(explosionsGroup);
+        // create group for explosions and add now so they're under the UI
+        final Group explosionsGroup = new Group();
+        explosionsGroup.getColor().a = 0f; // invisible, will tween in
+        stage.addActor(explosionsGroup);
 
-		// setup skin and table
-		skin = new Skin(Gdx.files.internal("ui/menuSkin.json"), new TextureAtlas("ui/simpleatlas.atlas"));
+        // setup skin and table
+        skin = new Skin(Gdx.files.internal("ui/menuSkin.json"), new TextureAtlas("ui/simpleatlas.atlas"));
 
-		table = new Table(skin);
-		table.setBounds(0, 100, Config.WIDTH, Config.HEIGHT);
-		table.setFillParent(true);
+        table = new Table(skin);
+        table.setBounds(0, 100, Config.WIDTH, Config.HEIGHT);
+        table.setFillParent(true);
 
-		// creating fonts
-		buttonFont = FontUtils.generateFont("fonts/square.ttf", 42, Color.WHITE);
-		titleFont = FontUtils.generateFont("fonts/square.ttf", 90, Color.BLACK);
-		textFont = FontUtils.generateFont("fonts/minecraftia.ttf", 16, Color.BLUE);
+        // creating fonts
+        buttonFont = FontUtils.generateFont("fonts/square.ttf", 42, Color.WHITE);
+        titleFont = FontUtils.generateFont("fonts/square.ttf", 90, Color.BLACK);
+        textFont = FontUtils.generateFont("fonts/minecraftia.ttf", 16, Color.BLUE);
 
-		// programmatically add font to style
-		TextButtonStyle buttonStyle = skin.get("default", TextButtonStyle.class);
-		buttonStyle.font = buttonFont;
+        // programmatically add font to style
+        TextButtonStyle buttonStyle = skin.get("default", TextButtonStyle.class);
+        buttonStyle.font = buttonFont;
 
-		// play button
-		final TextButton buttonPlay = new TextButton("Play", buttonStyle);
-		buttonPlay.addListener(new ClickListener() {
-			@Override
-			public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-				if (buttonPlay.getColor().a >= 1f) {
-					rolloverSfx.play();
-				}
-			}
+        // play button
+        final TextButton buttonPlay = new TextButton("Play", buttonStyle);
+        buttonPlay.addListener(new ClickListener() {
+            @Override
+            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                if (buttonPlay.getColor().a >= 1f) {
+                    rolloverSfx.play();
+                }
+            }
 
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				stage.addAction(Actions.sequence(Actions.fadeOut(0.5f), Actions.run(new Runnable() {
-					@Override
-					public void run() {
-						((Game) Gdx.app.getApplicationListener()).setScreen(new LevelMenu());
-					}
-				})));
-			}
-		});
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                stage.addAction(Actions.sequence(Actions.fadeOut(0.5f), Actions.run(new Runnable() {
+                    @Override
+                    public void run() {
+                        ((Game) Gdx.app.getApplicationListener()).setScreen(new LevelMenu());
+                    }
+                })));
+            }
+        });
 
-		// settings button
-		final TextButton buttonSettings = new TextButton("Settings", buttonStyle);
-		buttonSettings.addListener(new ClickListener() {
-			@Override
-			public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-				if (buttonPlay.getColor().a >= 1f) {
-					rolloverSfx.play();
-				}
-			}
+        // settings button
+        final TextButton buttonSettings = new TextButton("Settings", buttonStyle);
+        buttonSettings.addListener(new ClickListener() {
+            @Override
+            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                if (buttonPlay.getColor().a >= 1f) {
+                    rolloverSfx.play();
+                }
+            }
 
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				// stage.addAction(Actions.sequence(Actions.fadeOut(0.5f),
-				// Actions.run(new Runnable() {
-				// @Override
-				// public void run() {
-				// ((Game) Gdx.app.getApplicationListener()).setScreen(new
-				// LevelMenu());
-				// }
-				// })));
-			}
-		});
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                // stage.addAction(Actions.sequence(Actions.fadeOut(0.5f),
+                // Actions.run(new Runnable() {
+                // @Override
+                // public void run() {
+                // ((Game) Gdx.app.getApplicationListener()).setScreen(new
+                // LevelMenu());
+                // }
+                // })));
+            }
+        });
 
-		// exit button
-		final TextButton buttonExit = new TextButton("Exit", buttonStyle);
-		buttonExit.addListener(new ClickListener() {
-			@Override
-			public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-				if (buttonExit.getColor().a >= 1f) {
-					rolloverSfx.play();
-				}
-			}
+        // exit button
+        final TextButton buttonExit = new TextButton("Exit", buttonStyle);
+        buttonExit.addListener(new ClickListener() {
+            @Override
+            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                if (buttonExit.getColor().a >= 1f) {
+                    rolloverSfx.play();
+                }
+            }
 
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				Gdx.app.exit();
-			}
-		});
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                Gdx.app.exit();
+            }
+        });
 
-		// programmatically add font to labelstyle
-		LabelStyle headingStyle = skin.get("default", LabelStyle.class);
-		headingStyle.font = titleFont;
+        // programmatically add font to labelstyle
+        LabelStyle headingStyle = skin.get("default", LabelStyle.class);
+        headingStyle.font = titleFont;
 
-		// create heading
-		Label heading = new Label(Config.NAME, skin);
+        // create heading
+        Label heading = new Label(Config.NAME, skin);
 
-		// create bonus content
-		WindowStyle windowStyle = skin.get("default", WindowStyle.class);
-		windowStyle.titleFont = buttonFont;
-		final Window bonus = new Window("Bonus Game!", windowStyle);
-		LabelStyle bonusLabelStyle = new LabelStyle(textFont, Color.BLACK);
-		Label infoText = new Label("--Controls--\nWASD - Movement\nClick - Boost\nScroll - Spin", bonusLabelStyle);
-		infoText.setAlignment(Align.center);
-		Label descriptionText = new Label("Try to get both\nballs going as fast\nas possible at the\nsame time.",
-				bonusLabelStyle);
-		buttonStyle.font = buttonFont;
-		final TextButton buttonBonus = new TextButton("Start!", buttonStyle);
-		buttonBonus.addListener(new ClickListener() {
-			@Override
-			public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-				if (buttonBonus.getColor().a >= 1f) {
-					rolloverSfx.play();
-				}
-			}
+        // create bonus content
+        WindowStyle windowStyle = skin.get("default", WindowStyle.class);
+        windowStyle.titleFont = buttonFont;
+        final Window bonus = new Window("Bonus Game!", windowStyle);
+        LabelStyle bonusLabelStyle = new LabelStyle(textFont, Color.BLACK);
+        Label infoText = new Label("--Controls--\nWASD - Movement\nClick - Boost\nScroll - Spin", bonusLabelStyle);
+        infoText.setAlignment(Align.center);
+        Label descriptionText = new Label("Try to get both\nballs going as fast\nas possible at the\nsame time.",
+                bonusLabelStyle);
+        buttonStyle.font = buttonFont;
+        final TextButton buttonBonus = new TextButton("Start!", buttonStyle);
+        buttonBonus.addListener(new ClickListener() {
+            @Override
+            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                if (buttonBonus.getColor().a >= 1f) {
+                    rolloverSfx.play();
+                }
+            }
 
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				// fade to bottom of screen, fade stage, move to bonus game
-				// screen
-				bonus.addAction(Actions.sequence(
-						Actions.parallel(Actions.moveTo(bonus.getX(), 0, 0.5f), Actions.fadeOut(0.5f)),
-						Actions.run(new Runnable() {
-							@Override
-							public void run() {
-								bonus.setVisible(false); // disables window so
-															// it can't be
-															// clicked while
-															// invisible
-								stage.addAction(Actions.sequence(Actions.fadeOut(0.5f), Actions.run(new Runnable() {
-									@Override
-									public void run() {
-										((Game) Gdx.app.getApplicationListener()).setScreen(new BonusGame());
-									}
-								})));
-							}
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                // fade to bottom of screen, fade stage, move to bonus game
+                // screen
+                bonus.addAction(Actions.sequence(
+                        Actions.parallel(Actions.moveTo(bonus.getX(), 0, 0.5f), Actions.fadeOut(0.5f)),
+                        Actions.run(new Runnable() {
+                            @Override
+                            public void run() {
+                                bonus.setVisible(false); // disables window so it can't be clicked while invisible
+                                stage.addAction(Actions.sequence(Actions.fadeOut(0.5f), Actions.run(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        ((Game) Gdx.app.getApplicationListener()).setScreen(new BonusGame());
+                                    }
+                                })));
+                            }
 
-						})));
-			}
-		});
-		buttonBonus.pad(3f, 10f, 3f, 10f);
-		bonus.pad(windowStyle.titleFont.getBounds(bonus.getTitle()).height + 10f, 50f, 10f, 50f);
-		bonus.add(infoText).center().padBottom(10f).row();
-		bonus.add(descriptionText).center().padBottom(10f).row();
-		bonus.add(buttonBonus).size(210f, 76f).center();
-		bonus.setMovable(false);
-		bonus.pack();
-		bonus.setPosition(stage.getWidth() / 2 - bonus.getWidth() / 2, stage.getHeight() / 2 - bonus.getHeight() / 2);
-		bonus.setColor(Color.CYAN);
-		bonus.setVisible(false);
+                        })));
+            }
+        });
+        buttonBonus.pad(3f, 10f, 3f, 10f);
+        bonus.pad(windowStyle.titleFont.getBounds(bonus.getTitle()).height + 10f, 50f, 10f, 50f);
+        bonus.add(infoText).center().padBottom(10f).row();
+        bonus.add(descriptionText).center().padBottom(10f).row();
+        bonus.add(buttonBonus).size(210f, 76f).center();
+        bonus.setMovable(false);
+        bonus.pack();
+        bonus.setPosition(stage.getWidth() / 2 - bonus.getWidth() / 2, stage.getHeight() / 2 - bonus.getHeight() / 2);
+        bonus.setColor(Color.CYAN);
+        bonus.setVisible(false);
 
-		// handle input processor
-		Gdx.input.setInputProcessor(new InputMultiplexer(stage, new InputAdapter() {
+        // handle input processor
+        Gdx.input.setInputProcessor(new InputMultiplexer(stage, new InputAdapter() {
 
-			@Override
-			public boolean scrolled(int amount) {
-				Actor[] actors = explosionsGroup.getChildren().begin();
-				for (int i = 0, n = explosionsGroup.getChildren().size; i < n; i++) {
-					Explosion exp = (Explosion) actors[i];
-					// scroll = randomize
-					exp.velocity.setAngle(MathUtils.random(360));
-				}
-				explosionsGroup.getChildren().end();
-				return false;
-			}
+            @Override
+            public boolean scrolled(int amount) {
+                Actor[] actors = explosionsGroup.getChildren().begin();
+                for (int i = 0, n = explosionsGroup.getChildren().size; i < n; i++) {
+                    Explosion exp = (Explosion) actors[i];
+                    // scroll = randomize
+                    exp.velocity.setAngle(MathUtils.random(360));
+                }
+                explosionsGroup.getChildren().end();
+                return false;
+            }
 
-			@Override
-			public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-				Vector3 forcePoint3 = new Vector3(screenX, screenY, 0);
-				stage.getCamera().unproject(forcePoint3);
-				System.out.println("Before Point: " + forcePoint3.x + ", " + forcePoint3.y);
-				Vector2 forcePoint = new Vector2(forcePoint3.x, forcePoint3.y);
-				System.out.println("Point at: " + forcePoint3.x + ", " + forcePoint3.y);
+            @Override
+            public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+                Vector3 forcePoint3 = new Vector3(screenX, screenY, 0);
+                stage.getCamera().unproject(forcePoint3);
+                Vector2 forcePoint = new Vector2(forcePoint3.x, forcePoint3.y);
 
-				Actor[] actors = explosionsGroup.getChildren().begin();
-				for (int i = 0, n = explosionsGroup.getChildren().size; i < n; i++) {
-					Explosion exp = (Explosion) actors[i];
-					Vector2 expPos = new Vector2(exp.getX(), exp.getY());
-					// left = repel, right/other = attract
-					exp.velocity.set(expPos.sub(forcePoint).nor().scl(button == 0 ? -1f : 1f));
-				}
-				explosionsGroup.getChildren().end();
-				return false;
-			}
+                Actor[] actors = explosionsGroup.getChildren().begin();
+                for (int i = 0, n = explosionsGroup.getChildren().size; i < n; i++) {
+                    Explosion exp = (Explosion) actors[i];
+                    Vector2 expPos = new Vector2(exp.getX(), exp.getY());
+                    // left = repel, right/other = attract
+                    exp.velocity.set(expPos.sub(forcePoint).nor().scl(button == 0 ? -1f : 1f));
+                }
+                explosionsGroup.getChildren().end();
+                return false;
+            }
 
-			@Override
-			public boolean keyUp(int keycode) {
-				if (keycode == Keys.F9 && Config.debug) {
-					((Game) Gdx.app.getApplicationListener()).setScreen(new ExperimentScreen());
-				}
+            @Override
+            public boolean keyUp(int keycode) {
+                if (keycode == Keys.F9 && Config.debug) {
+                    ((Game) Gdx.app.getApplicationListener()).setScreen(new ExperimentScreen());
+                }
 
-				if (keycode == Keys.ESCAPE && bonus.isVisible()) {
-					// fade out and move to bottom
-					bonus.addAction(Actions.sequence(
-							Actions.parallel(Actions.moveTo(bonus.getX(), 0, 0.5f), Actions.fadeOut(0.5f)),
-							Actions.run(new Runnable() {
-								@Override
-								public void run() {
-									bonus.setVisible(false); // disables window
-																// so it can't
-																// be clicked
-																// while
-																// invisible
-								}
+                if (keycode == Keys.ESCAPE && bonus.isVisible()) {
+                    // fade out and move to bottom
+                    bonus.addAction(Actions.sequence(
+                            Actions.parallel(Actions.moveTo(bonus.getX(), 0, 0.5f), Actions.fadeOut(0.5f)),
+                            Actions.run(new Runnable() {
+                                @Override
+                                public void run() {
+                                    bonus.setVisible(false); // disables window so it can't be clicked while invisible
+                                }
 
-							})));
-				}
-				return false;
-			}
-		}, new KonamiInputDetector(new Runnable() {
-			@Override
-			public void run() {
-				badingSfx.play();
-				bonus.setVisible(true);
-				// fade in and move from top
-				bonus.addAction(Actions.sequence(Actions.alpha(0f), Actions.moveTo(bonus.getX(), Config.HEIGHT),
-						Actions.parallel(
-								Actions.moveTo(bonus.getX(), stage.getHeight() / 2 - bonus.getHeight() / 2, 0.5f),
-								Actions.fadeIn(0.5f))));
-			}
-		})));
+                            })));
+                }
+                return false;
+            }
+        }, new KonamiInputDetector(new Runnable() {
+            @Override
+            public void run() {
+                badingSfx.play();
+                bonus.setVisible(true);
+                // fade in and move from top
+                bonus.addAction(Actions.sequence(Actions.alpha(0f), Actions.moveTo(bonus.getX(), Config.HEIGHT),
+                        Actions.parallel(
+                                Actions.moveTo(bonus.getX(), stage.getHeight() / 2 - bonus.getHeight() / 2, 0.5f),
+                                Actions.fadeIn(0.5f))));
+                final Player player = Player.getExistingPlayer();
+                player.fetch(new StackMobCallback() {
 
-		// putting stuff together
-		table.add(heading).expandX().spaceBottom(150f).row();
-		table.add(buttonPlay).size(210f, 76f).spaceBottom(25f);
-		table.row();
-		// table.add(buttonSettings).size(210f, 76f).spaceBottom(25f);
-		// table.row();
-		table.add(buttonExit).size(210f, 76f);
-		stage.addActor(table);
-		stage.addActor(bonus);
+                    @Override
+                    public void success(String responseBody) {
+                        player.enableKonami();
+                    }
 
-		// creating animations
-		tweenManager = new TweenManager();
-		Tween.registerAccessor(Actor.class, new ActorAccessor());
+                    @Override
+                    public void failure(StackMobException e) {
+                    }
+                });
+            }
+        })));
 
-		// @formatter:off
+        // putting stuff together
+        table.add(heading).expandX().spaceBottom(150f).row();
+        table.add(buttonPlay).size(210f, 76f).spaceBottom(25f);
+        table.row();
+        // table.add(buttonSettings).size(210f, 76f).spaceBottom(25f);
+        // table.row();
+        table.add(buttonExit).size(210f, 76f);
+        stage.addActor(table);
+        stage.addActor(bonus);
+
+        // creating animations
+        tweenManager = new TweenManager();
+        Tween.registerAccessor(Actor.class, new ActorAccessor());
+
+        // @formatter:off
 
         Timeline.createSequence().beginSequence()
         .push(Tween.to(heading, ActorAccessor.RGB, 0.75f).target(0, 0, 1))
@@ -342,54 +347,54 @@ public class MainMenu implements Screen {
         .start(tweenManager);
         // @formatter:on
 
-		// table fade in
-		Tween.from(table, ActorAccessor.ALPHA, 1.5f).target(0).start(tweenManager);
-		Tween.from(table, ActorAccessor.Y, 1.5f).target(Config.HEIGHT / 2).start(tweenManager);
-		tweenManager.update(Gdx.graphics.getDeltaTime());
+        // table fade in
+        Tween.from(table, ActorAccessor.ALPHA, 1.5f).target(0).start(tweenManager);
+        Tween.from(table, ActorAccessor.Y, 1.5f).target(Config.HEIGHT / 2).start(tweenManager);
+        tweenManager.update(Gdx.graphics.getDeltaTime());
 
-		// add explosions flying around right above background layer
-		Rectangle bounds = getBounds();
-		final Texture explosionTexture = new Texture("images/disc256.png");
-		for (int i = 0; i < 20; i++) {
-			Explosion exp = new Explosion(getBounds(), explosionTexture);
-			float randomX = MathUtils.random(bounds.x + exp.getWidth(), bounds.x + bounds.width - exp.getWidth());
-			float randomY = MathUtils.random(bounds.y + exp.getHeight(), bounds.y + bounds.height - exp.getHeight());
-			exp.setPosition(randomX, randomY);
-			explosionsGroup.addActor(exp);
-		}
+        // add explosions flying around right above background layer
+        Rectangle bounds = getBounds();
+        final Texture explosionTexture = new Texture("images/disc256.png");
+        for (int i = 0; i < 20; i++) {
+            Explosion exp = new Explosion(getBounds(), explosionTexture);
+            float randomX = MathUtils.random(bounds.x + exp.getWidth(), bounds.x + bounds.width - exp.getWidth());
+            float randomY = MathUtils.random(bounds.y + exp.getHeight(), bounds.y + bounds.height - exp.getHeight());
+            exp.setPosition(randomX, randomY);
+            explosionsGroup.addActor(exp);
+        }
 
-		// fade in
-		stage.addAction(Actions.sequence(Actions.alpha(0), Actions.fadeIn(0.5f)));
-	}
+        // fade in
+        stage.addAction(Actions.sequence(Actions.alpha(0), Actions.fadeIn(0.5f)));
+    }
 
-	private Rectangle getBounds() {
-		// magic numbers represent border in background image
-		return new Rectangle(16f, 8f, Config.WIDTH - 32f, Config.HEIGHT - 16f);
-	}
+    private Rectangle getBounds() {
+        // magic numbers represent border in background image
+        return new Rectangle(16f, 8f, Config.WIDTH - 32f, Config.HEIGHT - 16f);
+    }
 
-	@Override
-	public void hide() {
-		dispose();
-	}
+    @Override
+    public void hide() {
+        dispose();
+    }
 
-	@Override
-	public void pause() {
+    @Override
+    public void pause() {
 
-	}
+    }
 
-	@Override
-	public void resume() {
+    @Override
+    public void resume() {
 
-	}
+    }
 
-	@Override
-	public void dispose() {
-		stage.dispose();
-		skin.dispose();
-		buttonFont.dispose();
-		titleFont.dispose();
-		rolloverSfx.dispose();
-		badingSfx.dispose();
-	}
+    @Override
+    public void dispose() {
+        stage.dispose();
+        skin.dispose();
+        buttonFont.dispose();
+        titleFont.dispose();
+        rolloverSfx.dispose();
+        badingSfx.dispose();
+    }
 
 }

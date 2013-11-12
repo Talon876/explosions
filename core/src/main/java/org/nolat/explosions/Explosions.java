@@ -1,6 +1,6 @@
 package org.nolat.explosions;
 
-import org.nolat.explosions.screens.LevelMenu;
+import org.nolat.explosions.screens.MainMenu;
 import org.nolat.explosions.screens.Splash;
 import org.nolat.explosions.stackmob.APIVersion;
 import org.nolat.explosions.stackmob.Launch;
@@ -24,9 +24,9 @@ public class Explosions extends Game {
         if (!Config.debug) {
             backgroundMusic.play();
             setScreen(new Splash());
-        } else { //if debugging go directly to level menu
+        } else { //if debugging go directly to main menu
             Gdx.app.log("StackMob", "StackMob v" + StackMob.getVersion());
-            setScreen(new LevelMenu());
+            setScreen(new MainMenu());
         }
     }
 

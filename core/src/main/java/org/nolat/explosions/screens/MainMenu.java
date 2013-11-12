@@ -63,7 +63,6 @@ public class MainMenu implements Screen {
 
         stage.act(delta);
         stage.draw();
-
         tweenManager.update(delta);
     }
 
@@ -95,7 +94,6 @@ public class MainMenu implements Screen {
         skin = new Skin(Gdx.files.internal("ui/menuSkin.json"), new TextureAtlas("ui/simpleatlas.atlas"));
 
         table = new Table(skin);
-        table.setBounds(0, 100, Config.WIDTH, Config.HEIGHT);
         table.setFillParent(true);
 
         // creating fonts
@@ -128,26 +126,45 @@ public class MainMenu implements Screen {
             }
         });
 
-        // settings button
-        final TextButton buttonSettings = new TextButton("Settings", buttonStyle);
-        buttonSettings.addListener(new ClickListener() {
+        // highscore button
+        final TextButton buttonHighscore = new TextButton("Highscores", buttonStyle);
+        buttonHighscore.addListener(new ClickListener() {
             @Override
             public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                if (buttonPlay.getColor().a >= 1f) {
+                if (buttonHighscore.getColor().a >= 1f) {
                     rolloverSfx.play();
                 }
             }
 
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                // stage.addAction(Actions.sequence(Actions.fadeOut(0.5f),
-                // Actions.run(new Runnable() {
-                // @Override
-                // public void run() {
-                // ((Game) Gdx.app.getApplicationListener()).setScreen(new
-                // LevelMenu());
-                // }
-                // })));
+                stage.addAction(Actions.sequence(Actions.fadeOut(0.5f), Actions.run(new Runnable() {
+                    @Override
+                    public void run() {
+                        ((Game) Gdx.app.getApplicationListener()).setScreen(new Highscores());
+                    }
+                })));
+            }
+        });
+
+        // settings button
+        final TextButton buttonSettings = new TextButton("Settings", buttonStyle);
+        buttonSettings.addListener(new ClickListener() {
+            @Override
+            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                if (buttonSettings.getColor().a >= 1f) {
+                    rolloverSfx.play();
+                }
+            }
+
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                stage.addAction(Actions.sequence(Actions.fadeOut(0.5f), Actions.run(new Runnable() {
+                    @Override
+                    public void run() {
+                        ((Game) Gdx.app.getApplicationListener()).setScreen(new Settings());
+                    }
+                })));
             }
         });
 
@@ -303,12 +320,14 @@ public class MainMenu implements Screen {
         })));
 
         // putting stuff together
-        table.add(heading).expandX().spaceBottom(150f).row();
-        table.add(buttonPlay).size(210f, 76f).spaceBottom(25f);
+        table.add(heading).expandX().spaceBottom(75f).row();
+        table.add(buttonPlay).size(250f, 76f).spaceBottom(25f);
         table.row();
-        // table.add(buttonSettings).size(210f, 76f).spaceBottom(25f);
-        // table.row();
-        table.add(buttonExit).size(210f, 76f);
+        table.add(buttonHighscore).size(250f, 76f).spaceBottom(25f);
+        table.row();
+        table.add(buttonSettings).size(250f, 76f).spaceBottom(25f);
+        table.row();
+        table.add(buttonExit).size(250f, 76f);
         stage.addActor(table);
         stage.addActor(bonus);
 
@@ -335,21 +354,23 @@ public class MainMenu implements Screen {
         .push(Tween.set(explosionsGroup, ActorAccessor.ALPHA).target(0f))
         .push(Tween.set(heading, ActorAccessor.ALPHA).target(0f))
         .push(Tween.set(buttonPlay, ActorAccessor.ALPHA).target(0f))
+        .push(Tween.set(buttonHighscore, ActorAccessor.ALPHA).target(0f))
         .push(Tween.set(buttonSettings, ActorAccessor.ALPHA).target(0f))
         .push(Tween.set(buttonExit, ActorAccessor.ALPHA).target(0f))
         .push(Tween.to(background, ActorAccessor.ALPHA, 1.0f).target(1f))
         .push(Tween.to(heading, ActorAccessor.ALPHA, 0.2f).target(1f))
-        .push(Tween.to(buttonPlay, ActorAccessor.ALPHA, 0.2f).target(1f))
-        .push(Tween.to(buttonSettings, ActorAccessor.ALPHA, 0.2f).target(1f))
         .push(Tween.to(buttonExit, ActorAccessor.ALPHA, 0.2f).target(1f))
+        .push(Tween.to(buttonSettings, ActorAccessor.ALPHA, 0.2f).target(1f))
+        .push(Tween.to(buttonHighscore, ActorAccessor.ALPHA, 0.2f).target(1f))
+        .push(Tween.to(buttonPlay, ActorAccessor.ALPHA, 0.2f).target(1f))
         .push(Tween.to(explosionsGroup, ActorAccessor.ALPHA, 0.5f).target(1f))
         .end()
         .start(tweenManager);
         // @formatter:on
 
         // table fade in
-        Tween.from(table, ActorAccessor.ALPHA, 1.5f).target(0).start(tweenManager);
-        Tween.from(table, ActorAccessor.Y, 1.5f).target(Config.HEIGHT / 2).start(tweenManager);
+        Tween.from(table, ActorAccessor.ALPHA, 1.0f).target(0).start(tweenManager);
+        Tween.from(table, ActorAccessor.Y, 2f).target(Config.HEIGHT / 2).start(tweenManager);
         tweenManager.update(Gdx.graphics.getDeltaTime());
 
         // add explosions flying around right above background layer

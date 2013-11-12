@@ -1,17 +1,10 @@
 package org.nolat.explosions.screens;
 
 import org.nolat.explosions.Config;
-import org.nolat.explosions.LevelInfo;
-import org.nolat.explosions.entities.LevelSelectron;
 import org.nolat.explosions.utils.FontUtils;
-import org.nolat.explosions.utils.InputAdapter;
-import org.nolat.explosions.utils.SaveData;
-import org.nolat.explosions.utils.ShaderUtils;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
@@ -31,32 +24,16 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
-public class LevelMenu implements Screen {
+public class Settings implements Screen {
 
     private Stage stage;
     private Table table;
     private Skin skin;
     private Sound rolloverSfx;
 
-    private BitmapFont levelSelectFont;
+    private BitmapFont settingsFont;
     private BitmapFont buttonFont;
     private BitmapFont titleFont;
-
-    private LevelSelectron levelSelectron;
-    private final int selected;
-
-    /**
-     * 
-     * @param selected
-     *            index selected by default
-     */
-    public LevelMenu(int selected) {
-        this.selected = selected;
-    }
-
-    public LevelMenu() {
-        this(SaveData.getLevelsUnlocked());
-    }
 
     @Override
     public void render(float delta) {
@@ -75,18 +52,9 @@ public class LevelMenu implements Screen {
 
     @Override
     public void show() {
-        ShaderUtils.init();
         stage = new Stage(Config.WIDTH, Config.HEIGHT, false);
         //handle input processor
-        Gdx.input.setInputProcessor(new InputMultiplexer(stage, new InputAdapter() {
-            @Override
-            public boolean keyUp(int keycode) {
-                if (keycode == Keys.F9 && Config.debug) {
-                    ((Game) Gdx.app.getApplicationListener()).setScreen(new ExperimentScreen());
-                }
-                return false;
-            }
-        }));
+        Gdx.input.setInputProcessor(stage);
         rolloverSfx = Gdx.audio.newSound(Gdx.files.internal("sfx/rollover.ogg"));
 
         Texture backgroundTexture = new Texture("backgrounds/title.png");
@@ -101,7 +69,7 @@ public class LevelMenu implements Screen {
         table = new Table(skin);
         table.setFillParent(true);
 
-        levelSelectFont = FontUtils.generateFont("fonts/square.ttf", 36, Color.WHITE);
+        settingsFont = FontUtils.generateFont("fonts/square.ttf", 36, Color.WHITE);
         buttonFont = FontUtils.generateFont("fonts/square.ttf", 42, Color.WHITE);
         titleFont = FontUtils.generateFont("fonts/square.ttf", 90, Color.BLACK);
 
@@ -110,24 +78,13 @@ public class LevelMenu implements Screen {
         labelStyle.fontColor = Color.BLACK;
         skin.add("default", labelStyle, LabelStyle.class);
 
-        Texture levelButtonTexture = new Texture("images/disc256.png");
-        levelSelectron = new LevelSelectron(levelSelectFont, levelButtonTexture, skin, SaveData.getLevelsUnlocked(),
-                new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                //TODO make it so this can be null and/or re-evaluate if it's needed
-                //possibly load score info and show it under the selectron
-            }
-        });
-        levelSelectron.setSelectedLevel(selected);
-
         TextButtonStyle buttonStyle = skin.get("default", TextButtonStyle.class);
         buttonStyle.font = buttonFont;
-        final TextButton play = new TextButton("Play", buttonStyle);
-        play.addListener(new ClickListener() {
+        final TextButton save = new TextButton("Save", buttonStyle);
+        save.addListener(new ClickListener() {
             @Override
             public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                if (play.getColor().a >= 1f) {
+                if (save.getColor().a >= 1f) {
                     rolloverSfx.play();
                 }
             }
@@ -137,13 +94,12 @@ public class LevelMenu implements Screen {
                 stage.addAction(Actions.sequence(Actions.fadeOut(0.5f), Actions.run(new Runnable() {
                     @Override
                     public void run() {
-                        ((Game) Gdx.app.getApplicationListener()).setScreen(new Play(LevelInfo
-                                .getLevelInfo(levelSelectron.getSelectedLevel())));
+                        ((Game) Gdx.app.getApplicationListener()).setScreen(new MainMenu());
                     }
                 })));
             }
         });
-        play.pad(3f, 10f, 3f, 10f);
+        save.pad(3f, 10f, 3f, 10f);
 
         final TextButton back = new TextButton("Back", buttonStyle);
         back.addListener(new ClickListener() {
@@ -167,11 +123,11 @@ public class LevelMenu implements Screen {
         back.pad(3f, 10f, 3f, 10f);
 
         //putting stuff together
-        table.add("Select Level").colspan(3).expandX().spaceBottom(25).row();
+        table.add("Settings").colspan(3).expandX().spaceBottom(25).row();
 
         table.add(back).size(210f, 76f).uniformX().bottom().left().padLeft(28).padBottom(20);
-        table.add(levelSelectron.getSelectron()).expand().top();
-        table.add(play).size(210f, 76f).uniformX().bottom().right().padRight(28).padBottom(20);
+        table.add().expand().top();
+        table.add(save).size(210f, 76f).uniformX().bottom().right().padRight(28).padBottom(20);
 
         stage.addActor(table);
 
@@ -185,12 +141,10 @@ public class LevelMenu implements Screen {
 
     @Override
     public void pause() {
-
     }
 
     @Override
     public void resume() {
-
     }
 
     @Override
@@ -198,7 +152,7 @@ public class LevelMenu implements Screen {
         stage.dispose();
         skin.dispose();
         rolloverSfx.dispose();
-        levelSelectFont.dispose();
+        settingsFont.dispose();
         titleFont.dispose();
         buttonFont.dispose();
     }

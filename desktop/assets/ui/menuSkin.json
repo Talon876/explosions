@@ -9,7 +9,8 @@
     },
     "com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle": {
     	"default": { "fontColor": "white" },
-        "levelButtons": {"fontColor": "black"}
+        "levelButtons": {"fontColor": "black"},
+        "settings": {"fontColor": "black"}
     },
     "com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle": {
     	"default" : {
@@ -40,6 +41,15 @@
     		"titleFontColor" : "black",
     		"background": "window.background"
     	}
+    },
+    "com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle": {
+        "default" : {
+            "fontColor": "darkGray",
+            "focusedFontColor": "black",
+            "focusedBackground": "button.down",
+            "cursor": "default.selection",
+            "selection": "window.background"
+        }
     }
 
 }

@@ -12,7 +12,7 @@ import com.stackmob.sdk.exception.StackMobException;
 
 public class SaveData {
 
-    private static final Preferences prefs = Gdx.app.getPreferences(Config.NAME);
+    private static final Preferences prefs = Gdx.app.getPreferences(Config.NAME + (Config.debug ? ".debug" : ""));
     //preference strings
     private static final String LEVELS_UNLOCKED = "unlocked";
     private static final String LEVEL_DATA = "level_data_"; //append level # when using

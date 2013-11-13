@@ -167,8 +167,8 @@ public class Highscores implements Screen {
                 highscoreTable.add(Integer.toString(p.getScore()), "settings").center();
                 highscoreTable.row();
             }
-            highscoreTable.invalidateHierarchy();
         }
+        highscoreTable.invalidateHierarchy();
     }
 
     private void refreshScores() {

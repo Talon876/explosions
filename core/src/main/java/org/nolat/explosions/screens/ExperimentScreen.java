@@ -29,163 +29,158 @@ import com.badlogic.gdx.utils.Timer.Task;
 
 public class ExperimentScreen implements Screen {
 
-    private static final int INITIAL_AMOUNT = 25;
+	private static final int INITIAL_AMOUNT = 25;
 
-    private Stage stage;
-    private Group explosions;
+	private Stage stage;
+	private Group explosions;
 
-    private Timer spawnTimer;
+	private Timer spawnTimer;
 
-    private int numDestroyed = 0;
+	private int numDestroyed = 0;
 
-    private TextureRegion explosionTexture;
-    private Sound popFx, puffFx;
+	private TextureRegion explosionTexture;
+	private Sound popFx, puffFx;
 
-    @Override
-    public void render(float delta) {
-        Gdx.gl.glClearColor(0, 0, 0, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+	@Override
+	public void render(float delta) {
+		Gdx.gl.glClearColor(0, 0, 0, 1);
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        stage.act(delta);
-        stage.draw();
-    }
+		stage.act(delta);
+		stage.draw();
+	}
 
-    @Override
-    public void resize(int width, int height) {
-        stage.setViewport(Config.WIDTH, Config.HEIGHT, false);
-        stage.getCamera().update();
-    }
+	@Override
+	public void resize(int width, int height) {
+		stage.setViewport(Config.WIDTH, Config.HEIGHT, false);
+		stage.getCamera().update();
+	}
 
-    @Override
-    public void show() {
-        stage = new Stage(Config.WIDTH, Config.HEIGHT, false);
-        final Texture explosionTex = new Texture("images/disc256.png");
-        explosionTex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-        explosionTexture = new TextureRegion(explosionTex);
+	@Override
+	public void show() {
+		stage = new Stage(Config.WIDTH, Config.HEIGHT, false);
+		final Texture explosionTex = new Texture("images/disc256.png");
+		explosionTex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		explosionTexture = new TextureRegion(explosionTex);
 
-        popFx = Gdx.audio.newSound(Gdx.files.internal("sfx/pop.ogg"));
-        puffFx = Gdx.audio.newSound(Gdx.files.internal("sfx/puff.ogg"));
+		popFx = Gdx.audio.newSound(Gdx.files.internal("sfx/pop.ogg"));
+		puffFx = Gdx.audio.newSound(Gdx.files.internal("sfx/puff.ogg"));
 
-        Gdx.input.setInputProcessor(new InputMultiplexer(new InputAdapter() {
+		Gdx.input.setInputProcessor(new InputMultiplexer(new InputAdapter() {
 
-            @Override
-            public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-                if (!isExplosionsHappening()) {
-                    Explosion seed = new Explosion(getBounds(), explosionTexture, puffFx, popFx);
-                    Vector3 point3 = new Vector3(screenX, screenY, 0);
-                    stage.getCamera().unproject(point3);
-                    seed.setPosition(point3.x, point3.y);
-                    seed.explode();
-                    explosions.addActor(seed);
-                }
-                return false;
-            }
+			@Override
+			public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+				if (!isExplosionsHappening()) {
+					Explosion seed = new Explosion(getBounds(), explosionTexture, puffFx, popFx);
+					Vector3 point3 = new Vector3(screenX, screenY, 0);
+					stage.getCamera().unproject(point3);
+					seed.setPosition(point3.x, point3.y);
+					seed.explode();
+					explosions.addActor(seed);
+				}
+				return false;
+			}
 
-            @Override
-            public boolean keyDown(int keycode) {
-                switch (keycode) {
-                case Keys.F10:
-                    HUD.showFps = !HUD.showFps;
-                    break;
-                case Keys.BACK:
-                case Keys.ESCAPE:
-                    ((Game) Gdx.app.getApplicationListener()).setScreen(new MainMenu());
-                    break;
-                }
-                return false;
-            }
-        }, stage));
+			@Override
+			public boolean keyDown(int keycode) {
+				switch (keycode) {
+				case Keys.F10:
+					HUD.showFps = !HUD.showFps;
+					break;
+				case Keys.BACK:
+				case Keys.ESCAPE:
+					((Game) Gdx.app.getApplicationListener()).setScreen(new MainMenu());
+					break;
+				}
+				return false;
+			}
+		}, stage));
 
-        setupBackground();
+		setupBackground();
 
-        // set initial explosions
-        explosions = new Group();
-        spawnExplosions(INITIAL_AMOUNT, explosionTexture, popFx, puffFx);
-        stage.addActor(explosions);
+		// set initial explosions
+		explosions = new Group();
+		spawnExplosions(INITIAL_AMOUNT, explosionTexture, popFx, puffFx);
+		stage.addActor(explosions);
 
-        spawnTimer = new Timer();
-        spawnTimer.scheduleTask(new Task() {
-            @Override
-            public void run() {
-                if (explosions.getChildren().size < 125) {
-                    spawnExplosions(35, explosionTexture, popFx, puffFx);
-                }
-            }
+		spawnTimer = new Timer();
+		spawnTimer.scheduleTask(new Task() {
+			@Override
+			public void run() {
+				if (explosions.getChildren().size < 125) {
+					spawnExplosions(35, explosionTexture, popFx, puffFx);
+				}
+			}
 
-        }, 1f, 5f);
+		}, 1f, 5f);
 
-        stage.addAction(Actions.sequence(Actions.alpha(0), Actions.fadeIn(0.5f)));
-    }
+		stage.addAction(Actions.sequence(Actions.alpha(0), Actions.fadeIn(0.5f)));
+	}
 
-    private void spawnExplosions(final int amount, final TextureRegion explosionTexture, final Sound popFx,
-            final Sound puffFx) {
-        final Rectangle bounds = getBounds();
-        //        new Thread(new Runnable() {
-        //            @Override
-        //            public void run() {
-        for (int i = 0; i < amount; i++) {
-            Explosion exp = new Explosion(bounds, explosionTexture, puffFx, popFx);
-            float randomX = MathUtils.random(bounds.x + exp.getWidth(), bounds.x + bounds.width - exp.getWidth());
-            float randomY = MathUtils.random(bounds.y + exp.getHeight(), bounds.y + bounds.height - exp.getHeight());
-            exp.setPosition(randomX, randomY);
-            exp.setDeathAction(new Runnable() {
-                @Override
-                public void run() {
-                    numDestroyed++;
-                }
-            });
-            explosions.addActor(exp);
-        }
+	private void spawnExplosions(final int amount, final TextureRegion explosionTexture, final Sound popFx,
+			final Sound puffFx) {
+		final Rectangle bounds = getBounds();
+		for (int i = 0; i < amount; i++) {
+			Explosion exp = new Explosion(bounds, explosionTexture, puffFx, popFx);
+			float randomX = MathUtils.random(bounds.x + exp.getWidth(), bounds.x + bounds.width - exp.getWidth());
+			float randomY = MathUtils.random(bounds.y + exp.getHeight(), bounds.y + bounds.height - exp.getHeight());
+			exp.setPosition(randomX, randomY);
+			exp.setDeathAction(new Runnable() {
+				@Override
+				public void run() {
+					numDestroyed++;
+				}
+			});
+			explosions.addActor(exp);
+		}
+	}
 
-        //        }, "Spawn").start();
-    }
+	private boolean isExplosionsHappening() {
+		boolean exploding = false;
+		Actor[] actors = explosions.getChildren().begin();
+		for (int i = 0, n = explosions.getChildren().size; i < n; i++) {
+			if (actors[i] instanceof Explosion) {
+				Explosion exp = (Explosion) actors[i];
+				if (exp.getState() == ExplosionState.EXPLODING) {
+					exploding = true;
+				}
+			}
+		}
+		explosions.getChildren().end();
+		return exploding;
+	}
 
-    private boolean isExplosionsHappening() {
-        boolean exploding = false;
-        Actor[] actors = explosions.getChildren().begin();
-        for (int i = 0, n = explosions.getChildren().size; i < n; i++) {
-            if (actors[i] instanceof Explosion) {
-                Explosion exp = (Explosion) actors[i];
-                if (exp.getState() == ExplosionState.EXPLODING) {
-                    exploding = true;
-                }
-            }
-        }
-        explosions.getChildren().end();
-        return exploding;
-    }
+	@Override
+	public void hide() {
+		dispose();
+	}
 
-    @Override
-    public void hide() {
-        dispose();
-    }
+	@Override
+	public void pause() {
+	}
 
-    @Override
-    public void pause() {
-    }
+	@Override
+	public void resume() {
+	}
 
-    @Override
-    public void resume() {
-    }
+	@Override
+	public void dispose() {
+		stage.dispose();
+		explosionTexture.getTexture().dispose();
+		popFx.dispose();
+		puffFx.dispose();
+	}
 
-    @Override
-    public void dispose() {
-        stage.dispose();
-        explosionTexture.getTexture().dispose();
-        popFx.dispose();
-        puffFx.dispose();
-    }
+	private void setupBackground() {
+		Texture backgroundTexture = new Texture("backgrounds/title.png");
+		Image background = new Image(backgroundTexture);
+		background.setPosition(0, 0);
+		background.setFillParent(true);
+		stage.addActor(background);
+	}
 
-    private void setupBackground() {
-        Texture backgroundTexture = new Texture("backgrounds/title.png");
-        Image background = new Image(backgroundTexture);
-        background.setPosition(0, 0);
-        background.setFillParent(true);
-        stage.addActor(background);
-    }
-
-    public Rectangle getBounds() {
-        // magic numbers represent border in background image
-        return new Rectangle(16f, 8f, Config.WIDTH - 32f, Config.HEIGHT - 16f);
-    }
+	public Rectangle getBounds() {
+		// magic numbers represent border in background image
+		return new Rectangle(16f, 8f, Config.WIDTH - 32f, Config.HEIGHT - 16f);
+	}
 }

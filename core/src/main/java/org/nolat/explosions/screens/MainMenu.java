@@ -286,6 +286,10 @@ public class MainMenu implements Screen {
                 if (keycode == Keys.F9 && Config.debug) {
                     ((Game) Gdx.app.getApplicationListener()).setScreen(new ExperimentScreen());
                 }
+                
+                if (keycode == Keys.F10 && Config.debug) {
+                    ((Game) Gdx.app.getApplicationListener()).setScreen(new Win());
+                }
 
                 if (keycode == Keys.ESCAPE && bonus.isVisible()) {
                     // fade out and move to bottom

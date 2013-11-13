@@ -33,7 +33,6 @@ public class LevelInfo {
                 }
             }
         }
-
     }
 
     public static List<LevelInfo> getAllLevels() {

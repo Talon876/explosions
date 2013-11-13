@@ -1,11 +1,12 @@
 package org.nolat.explosions.entities;
 
 import org.nolat.explosions.utils.ColorUtils;
+import org.nolat.explosions.utils.ParticleEffectPool;
+import org.nolat.explosions.utils.ParticleEffectPool.PooledEffect;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -24,13 +25,25 @@ public class Explosion extends Actor {
             WAIT_TIME = 1.2f; // time in seconds to wait at max size before  dying
     private static final int ANGLE_FLUCTUATION = 15; // degrees
 
+    private static final ParticleEffectPool confettiPool;
+    private static final ParticleEffectPool explodePool;
+    static {
+        ParticleEffect confettiTrailPool = new ParticleEffect();
+        confettiTrailPool.load(Gdx.files.internal("particles/confetti.p"), Gdx.files.internal("images/"));
+        confettiPool = new ParticleEffectPool(confettiTrailPool, 125, 200);
+
+        ParticleEffect explodeEffectPool = new ParticleEffect();
+        explodeEffectPool.load(Gdx.files.internal("particles/explode.p"), Gdx.files.internal("images/"));
+        explodePool = new ParticleEffectPool(explodeEffectPool, 75, 100);
+    }
+
     private final Rectangle bounds;
     private final TextureRegion texture;
     private final Sound growFx;
     private final Sound dieFx;
 
-    private final ParticleEffect confettiTrail;
-    private final ParticleEffect explodeEffect;
+    private final PooledEffect confettiTrail;
+    private final PooledEffect explodeEffect;
     private float[] particleColor;
 
     public final Vector2 velocity;
@@ -40,20 +53,18 @@ public class Explosion extends Actor {
 
     private Runnable deathAction;
 
-    public Explosion(Rectangle bounds, Texture texture, Sound growFx, Sound dieFx) {
+    public Explosion(Rectangle bounds, TextureRegion texture, Sound growFx, Sound dieFx) {
         this.bounds = bounds;
-        this.texture = new TextureRegion(texture);
+        this.texture = texture;
         this.growFx = growFx;
         this.dieFx = dieFx;
         deathAction = new DefaultDeathAction();
 
-        confettiTrail = new ParticleEffect();
-        confettiTrail.load(Gdx.files.internal("particles/confetti.p"), Gdx.files.internal("images/"));
+        confettiTrail = confettiPool.obtain();
         confettiTrail.setPosition(getX(), getY());
         confettiTrail.start();
 
-        explodeEffect = new ParticleEffect();
-        explodeEffect.load(Gdx.files.internal("particles/explode.p"), Gdx.files.internal("images/"));
+        explodeEffect = explodePool.obtain();
 
         velocity = new Vector2(1, 1).setAngle(getRandomAngle(ANGLE_FLUCTUATION));
         speed = MathUtils.random(MIN_SPEED, MAX_SPEED);
@@ -79,7 +90,7 @@ public class Explosion extends Actor {
         return MathUtils.random((quadrant * 90) + fluctuation, ((quadrant + 1) * 90) - fluctuation);
     }
 
-    public Explosion(Rectangle bounds, Texture texture) {
+    public Explosion(Rectangle bounds, TextureRegion texture) {
         this(bounds, texture, null, null);
     }
 
@@ -88,8 +99,9 @@ public class Explosion extends Actor {
         if (growFx != null) {
             growFx.play();
         }
-        explodeEffect.reset();
-        explodeEffect.start();
+        if (explodeEffect != null) {
+            explodeEffect.reset();
+        }
         addAction(Actions.sequence(
                 Actions.parallel(Actions.sizeTo(GROW_SIZE, GROW_SIZE, GROW_TIME, Interpolation.exp5In),
                         Actions.alpha(0.75f, GROW_TIME, Interpolation.exp5In)), Actions.delay(WAIT_TIME),
@@ -100,8 +112,12 @@ public class Explosion extends Actor {
                                 if (dieFx != null) {
                                     dieFx.play(0.55f);
                                 }
-                                explodeEffect.dispose();
-                                confettiTrail.dispose();
+                                if (explodeEffect != null) {
+                                    explodeEffect.free();
+                                }
+                                if (confettiTrail != null) {
+                                    confettiTrail.free();
+                                }
                                 Explosion.this.remove();
                             }
                         })));
@@ -136,8 +152,8 @@ public class Explosion extends Actor {
     }
 
     private void handleExplosionCollisions() {
-        Actor[] actors = getStage().getRoot().getChildren().begin();
-        for (int i = 0, n = getStage().getRoot().getChildren().size; i < n; i++) {
+        Actor[] actors = getParent().getChildren().begin();
+        for (int i = 0, n = getParent().getChildren().size; i < n; i++) {
             if (actors[i] instanceof Explosion) {
                 Explosion exp = (Explosion) actors[i];
                 if (exp.getState() == ExplosionState.EXPLODING) {
@@ -147,7 +163,7 @@ public class Explosion extends Actor {
                 }
             }
         }
-        getStage().getRoot().getChildren().end();
+        getParent().getChildren().end();
     }
 
     @Override
@@ -169,9 +185,13 @@ public class Explosion extends Actor {
     public void draw(SpriteBatch batch, float parentAlpha) {
         super.draw(batch, parentAlpha);
         if (parentAlpha >= .9f) {
-            confettiTrail.draw(batch, Gdx.graphics.getDeltaTime());
+            if (confettiTrail != null) {
+                confettiTrail.draw(batch, Gdx.graphics.getDeltaTime());
+            }
         }
-        explodeEffect.draw(batch, Gdx.graphics.getDeltaTime());
+        if (explodeEffect != null) {
+            explodeEffect.draw(batch, Gdx.graphics.getDeltaTime());
+        }
         batch.setColor(new Color(getColor().r, getColor().g, getColor().b, getColor().a * parentAlpha));
         batch.draw(texture, getX() - getWidth() / 2, getY() - getHeight() / 2, getOriginX(), getOriginY(), getWidth(),
                 getHeight(), getScaleX(), getScaleY(), getRotation());
@@ -191,10 +211,14 @@ public class Explosion extends Actor {
     }
 
     private void updateParticles() {
-        confettiTrail.setPosition(getX(), getY());
-        confettiTrail.findEmitter("confetti").getTint().setColors(particleColor);
-        explodeEffect.setPosition(getX(), getY());
-        explodeEffect.findEmitter("explode").getTint().setColors(particleColor);
+        if (confettiTrail != null) {
+            confettiTrail.setPosition(getX(), getY());
+            confettiTrail.findEmitter("confetti").getTint().setColors(particleColor);
+        }
+        if (explodeEffect != null) {
+            explodeEffect.setPosition(getX(), getY());
+            explodeEffect.findEmitter("explode").getTint().setColors(particleColor);
+        }
     }
 
     public enum ExplosionState {

@@ -24,6 +24,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -381,7 +382,7 @@ public class MainMenu implements Screen {
 
         // add explosions flying around right above background layer
         Rectangle bounds = getBounds();
-        final Texture explosionTexture = new Texture("images/disc256.png");
+        final TextureRegion explosionTexture = new TextureRegion(new Texture("images/disc256.png"));
         for (int i = 0; i < 20; i++) {
             Explosion exp = new Explosion(getBounds(), explosionTexture);
             float randomX = MathUtils.random(bounds.x + exp.getWidth(), bounds.x + bounds.width - exp.getWidth());

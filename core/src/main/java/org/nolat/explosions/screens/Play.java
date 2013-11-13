@@ -22,6 +22,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
@@ -133,8 +134,9 @@ public class Play implements Screen {
     @Override
     public void show() {
         stage = new Stage(Config.WIDTH, Config.HEIGHT, false);
-        final Texture explosionTexture = new Texture("images/disc256.png");
-        explosionTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+        final Texture explosionTex = new Texture("images/disc256.png");
+        explosionTex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+        final TextureRegion explosionTexture = new TextureRegion(explosionTex);
 
         final Sound popFx = Gdx.audio.newSound(Gdx.files.internal("sfx/pop.ogg"));
         final Sound puffFx = Gdx.audio.newSound(Gdx.files.internal("sfx/puff.ogg"));

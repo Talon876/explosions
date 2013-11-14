@@ -34,8 +34,6 @@ public class ExperimentScreen implements Screen {
 	private Stage stage;
 	private Group explosions;
 
-	private Timer spawnTimer;
-
 	private int numDestroyed = 0;
 	private int clearedAmount = 0;
 	private float elapsedTime;
@@ -48,9 +46,10 @@ public class ExperimentScreen implements Screen {
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+		elapsedTime += delta;
+		spawnManagement();
 		stage.act(delta);
 		stage.draw();
-		elapsedTime += delta;
 	}
 
 	@Override
@@ -109,25 +108,20 @@ public class ExperimentScreen implements Screen {
 		spawnExplosions(INITIAL_AMOUNT, explosionTexture, popFx, puffFx);
 		stage.addActor(explosions);
 
-		spawnTimer = new Timer();
-		spawnTimer.scheduleTask(new Task() {
-			@Override
-			public void run() {
-				int newAmt = Math.max(10, INITIAL_AMOUNT - (clearedAmount) * 5);
-				int lastAmt = Math.max(10, INITIAL_AMOUNT - (Math.max(clearedAmount - 1, 0)) * 5);
-				int triggerAmt = (int) (lastAmt * 0.19f);
-				if (explosions.getChildren().size <= triggerAmt && !isExplosionsHappening()) {
-					spawnExplosions(newAmt, explosionTexture, popFx, puffFx);
-					clearedAmount++;
-					System.out.println("destroyed " + numDestroyed + ", cleared " + clearedAmount + ", taken "
-							+ Math.round(elapsedTime) + " seconds");
-					System.out.println("Trigger: " + lastAmt * 0.19f);
-				}
-			}
-
-		}, 1f, 1f);
-
 		stage.addAction(Actions.sequence(Actions.alpha(0), Actions.fadeIn(0.5f)));
+	}
+	
+	private void spawnManagement() {
+		int newAmt = Math.max(10, INITIAL_AMOUNT - (clearedAmount) * 5);
+		int lastAmt = Math.max(10, INITIAL_AMOUNT - (Math.max(clearedAmount - 1, 0)) * 5);
+		int triggerAmt = (int) (lastAmt * 0.14f);
+		System.out.println("Destroy " + (newAmt-triggerAmt) + " of " + newAmt);
+		if (explosions.getChildren().size <= triggerAmt && !isExplosionsHappening()) {
+			spawnExplosions(newAmt, explosionTexture, popFx, puffFx);
+			clearedAmount++;
+			System.out.println("destroyed " + numDestroyed + ", cleared " + clearedAmount + ", taken "
+					+ Math.round(elapsedTime) + " seconds");
+		}
 	}
 
 	private void spawnExplosions(final int amount, final TextureRegion explosionTexture, final Sound popFx,

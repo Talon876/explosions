@@ -5,9 +5,9 @@ import org.nolat.explosions.LevelInfo;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.BitmapFont.TextBounds;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
@@ -39,7 +39,7 @@ public class HUD extends Actor {
     }
 
     @Override
-    public void draw(SpriteBatch batch, float parentAlpha) {
+    public void draw(Batch batch, float parentAlpha) {
         super.draw(batch, parentAlpha);
         string = String.format("L%d - Destroy %d of %d", levelInfo.level + 1, levelInfo.numNeededToPass,
                 levelInfo.numTotal);
@@ -66,7 +66,7 @@ public class HUD extends Actor {
         return bar;
     }
 
-    private void drawShadowString(SpriteBatch batch, BitmapFont font, String string, float x, float y, Color color) {
+    private void drawShadowString(Batch batch, BitmapFont font, String string, float x, float y, Color color) {
         font.setColor(Color.BLACK);
         font.draw(batch, string, x + shadowSize, y - shadowSize);
         font.setColor(color);

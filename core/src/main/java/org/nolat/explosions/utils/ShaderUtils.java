@@ -3,7 +3,7 @@ package org.nolat.explosions.utils;
 import org.nolat.explosions.Config;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 
 public class ShaderUtils {
@@ -28,7 +28,7 @@ public class ShaderUtils {
         }
     }
 
-    public static void startWobbly(SpriteBatch batch, float time, float wobble) {
+    public static void startWobbly(Batch batch, float time, float wobble) {
         if (wobbly != null) {
             batch.setShader(wobbly);
             wobbly.setUniformf("time", time);
@@ -38,7 +38,7 @@ public class ShaderUtils {
         }
     }
 
-    public static void end(SpriteBatch batch) {
+    public static void end(Batch batch) {
         batch.setShader(null);
     }
 

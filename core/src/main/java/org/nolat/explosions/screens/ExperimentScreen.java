@@ -73,15 +73,17 @@ public class ExperimentScreen implements Screen {
 
 			@Override
 			public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-				if (!isExplosionsHappening()) {
-					Explosion seed = new Explosion(getBounds(), explosionTexture, puffFx, popFx);
-					Vector3 point3 = new Vector3(screenX, screenY, 0);
-					stage.getCamera().unproject(point3);
-					seed.setPosition(point3.x, point3.y);
-					seed.setSpeedModifier(2f);
-					seed.explode();
-					explosions.addActor(seed);
+				if (isExplosionsHappening()) {
+					elapsedTime += 2f;
+					System.out.println("+2 second time penalty");
 				}
+				Explosion seed = new Explosion(getBounds(), explosionTexture, puffFx, popFx);
+				Vector3 point3 = new Vector3(screenX, screenY, 0);
+				stage.getCamera().unproject(point3);
+				seed.setPosition(point3.x, point3.y);
+				seed.setSpeedModifier(2f);
+				seed.explode();
+				explosions.addActor(seed);
 				return false;
 			}
 
@@ -111,10 +113,15 @@ public class ExperimentScreen implements Screen {
 		spawnTimer.scheduleTask(new Task() {
 			@Override
 			public void run() {
-				if (explosions.getChildren().size <= 10 && !isExplosionsHappening()) {
-					spawnExplosions(Math.max(INITIAL_AMOUNT - (clearedAmount * 5), 10), explosionTexture, popFx, puffFx);
+				int newAmt = Math.max(10, INITIAL_AMOUNT - (clearedAmount) * 5);
+				int lastAmt = Math.max(10, INITIAL_AMOUNT - (Math.max(clearedAmount - 1, 0)) * 5);
+				int triggerAmt = (int) (lastAmt * 0.19f);
+				if (explosions.getChildren().size <= triggerAmt && !isExplosionsHappening()) {
+					spawnExplosions(newAmt, explosionTexture, popFx, puffFx);
 					clearedAmount++;
-					System.out.println("destroyed " + numDestroyed + ", cleared " + clearedAmount + ", taken " + Math.round(elapsedTime) + " seconds");
+					System.out.println("destroyed " + numDestroyed + ", cleared " + clearedAmount + ", taken "
+							+ Math.round(elapsedTime) + " seconds");
+					System.out.println("Trigger: " + lastAmt * 0.19f);
 				}
 			}
 

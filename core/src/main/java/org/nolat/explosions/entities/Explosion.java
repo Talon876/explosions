@@ -105,11 +105,11 @@ public class Explosion extends Actor {
             explodeEffect.reset();
         }
         addAction(Actions.sequence(
-                Actions.parallel(Actions.sizeTo(1f / speedModifier * GROW_SIZE, 
-                								1f / speedModifier * GROW_SIZE,
+                Actions.parallel(Actions.sizeTo(1.5f / speedModifier * GROW_SIZE, 
+                								1.5f / speedModifier * GROW_SIZE,
                 								1f / speedModifier * GROW_TIME, Interpolation.exp5In),
                         Actions.alpha(0.75f, 1f / speedModifier * GROW_TIME, Interpolation.exp5In)),
-                        Actions.delay(1f),
+                        Actions.delay(1f / speedModifier * WAIT_TIME),
                         Actions.sizeTo(0, 0, 1f / speedModifier * SHRINK_TIME, Interpolation.exp5Out), Actions.run(deathAction),
                         Actions.run(new Runnable() {
                             @Override

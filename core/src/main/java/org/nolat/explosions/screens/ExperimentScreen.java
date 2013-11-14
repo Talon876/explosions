@@ -38,6 +38,7 @@ public class ExperimentScreen implements Screen {
 
 	private int numDestroyed = 0;
 	private int clearedAmount = 0;
+	private float elapsedTime;
 
 	private TextureRegion explosionTexture;
 	private Sound popFx, puffFx;
@@ -49,6 +50,7 @@ public class ExperimentScreen implements Screen {
 
 		stage.act(delta);
 		stage.draw();
+		elapsedTime += delta;
 	}
 
 	@Override
@@ -112,7 +114,7 @@ public class ExperimentScreen implements Screen {
 				if (explosions.getChildren().size <= 10 && !isExplosionsHappening()) {
 					spawnExplosions(Math.max(INITIAL_AMOUNT - (clearedAmount * 5), 10), explosionTexture, popFx, puffFx);
 					clearedAmount++;
-					System.out.println("destroyed " + numDestroyed + ", cleared " + clearedAmount);
+					System.out.println("destroyed " + numDestroyed + ", cleared " + clearedAmount + ", taken " + Math.round(elapsedTime) + " seconds");
 				}
 			}
 

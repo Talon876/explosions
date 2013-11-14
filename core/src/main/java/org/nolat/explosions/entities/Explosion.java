@@ -48,6 +48,7 @@ public class Explosion extends Actor {
 
     public final Vector2 velocity;
     private final float speed;
+    private float speedModifier;
 
     private ExplosionState state;
 
@@ -68,6 +69,7 @@ public class Explosion extends Actor {
 
         velocity = new Vector2(1, 1).setAngle(getRandomAngle(ANGLE_FLUCTUATION));
         speed = MathUtils.random(MIN_SPEED, MAX_SPEED);
+        speedModifier = 1f;
 
         setSize(32, 32);
 
@@ -103,9 +105,12 @@ public class Explosion extends Actor {
             explodeEffect.reset();
         }
         addAction(Actions.sequence(
-                Actions.parallel(Actions.sizeTo(GROW_SIZE, GROW_SIZE, GROW_TIME, Interpolation.exp5In),
-                        Actions.alpha(0.75f, GROW_TIME, Interpolation.exp5In)), Actions.delay(WAIT_TIME),
-                        Actions.sizeTo(0, 0, SHRINK_TIME, Interpolation.exp5Out), Actions.run(deathAction),
+                Actions.parallel(Actions.sizeTo(1f / speedModifier * GROW_SIZE, 
+                								1f / speedModifier * GROW_SIZE,
+                								1f / speedModifier * GROW_TIME, Interpolation.exp5In),
+                        Actions.alpha(0.75f, 1f / speedModifier * GROW_TIME, Interpolation.exp5In)),
+                        Actions.delay(1f),
+                        Actions.sizeTo(0, 0, 1f / speedModifier * SHRINK_TIME, Interpolation.exp5Out), Actions.run(deathAction),
                         Actions.run(new Runnable() {
                             @Override
                             public void run() {
@@ -171,7 +176,7 @@ public class Explosion extends Actor {
         super.act(delta);
         switch (state) {
         case MOVING:
-            setPosition(getX() + velocity.x * speed, getY() + velocity.y * speed);
+            setPosition(getX() + velocity.x * speed * speedModifier, getY() + velocity.y * speed * speedModifier);
             handleWallCollisions();
             handleExplosionCollisions();
             break;
@@ -209,6 +214,10 @@ public class Explosion extends Actor {
         super.setColor(color);
         particleColor = new float[] { getColor().r, getColor().g, getColor().b, getColor().a };
     }
+    
+    public void setSpeedModifier(float speedModifier) {
+    	this.speedModifier = speedModifier;
+    }
 
     private void updateParticles() {
         if (confettiTrail != null) {
@@ -235,6 +244,10 @@ public class Explosion extends Actor {
 
     public Vector2 getVelocity() {
         return velocity;
+    }
+    
+    public float getSpeedModifier() {
+    	return speedModifier;
     }
 
     public void setDeathAction(Runnable deathAction) {

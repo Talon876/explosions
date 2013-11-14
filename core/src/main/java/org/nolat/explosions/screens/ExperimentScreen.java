@@ -29,7 +29,7 @@ import com.badlogic.gdx.utils.Timer.Task;
 
 public class ExperimentScreen implements Screen {
 
-	private static final int INITIAL_AMOUNT = 25;
+	private static final int INITIAL_AMOUNT = 75;
 
 	private Stage stage;
 	private Group explosions;
@@ -37,6 +37,7 @@ public class ExperimentScreen implements Screen {
 	private Timer spawnTimer;
 
 	private int numDestroyed = 0;
+	private int clearedAmount = 0;
 
 	private TextureRegion explosionTexture;
 	private Sound popFx, puffFx;
@@ -75,6 +76,7 @@ public class ExperimentScreen implements Screen {
 					Vector3 point3 = new Vector3(screenX, screenY, 0);
 					stage.getCamera().unproject(point3);
 					seed.setPosition(point3.x, point3.y);
+					seed.setSpeedModifier(2f);
 					seed.explode();
 					explosions.addActor(seed);
 				}
@@ -107,12 +109,14 @@ public class ExperimentScreen implements Screen {
 		spawnTimer.scheduleTask(new Task() {
 			@Override
 			public void run() {
-				if (explosions.getChildren().size < 125) {
-					spawnExplosions(35, explosionTexture, popFx, puffFx);
+				if (explosions.getChildren().size <= 10 && !isExplosionsHappening()) {
+					spawnExplosions(Math.max(INITIAL_AMOUNT - (clearedAmount * 5), 10), explosionTexture, popFx, puffFx);
+					clearedAmount++;
+					System.out.println("destroyed " + numDestroyed + ", cleared " + clearedAmount);
 				}
 			}
 
-		}, 1f, 5f);
+		}, 1f, 1f);
 
 		stage.addAction(Actions.sequence(Actions.alpha(0), Actions.fadeIn(0.5f)));
 	}
@@ -125,6 +129,7 @@ public class ExperimentScreen implements Screen {
 			float randomX = MathUtils.random(bounds.x + exp.getWidth(), bounds.x + bounds.width - exp.getWidth());
 			float randomY = MathUtils.random(bounds.y + exp.getHeight(), bounds.y + bounds.height - exp.getHeight());
 			exp.setPosition(randomX, randomY);
+			exp.setSpeedModifier(2f);
 			exp.setDeathAction(new Runnable() {
 				@Override
 				public void run() {

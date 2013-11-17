@@ -11,6 +11,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 
 public class Win implements Screen {
@@ -54,6 +55,7 @@ public class Win implements Screen {
 		winImage = new Image(new Texture("images/winmessage.png"));
 		winImage.setPosition(Config.WIDTH / 2 - winImage.getWidth() / 2, Config.HEIGHT / 2 - winImage.getHeight() / 2);
 		stage.addActor(winImage);
+		stage.addAction(Actions.sequence(Actions.alpha(0), Actions.fadeIn(0.5f)));
 	}
 
 	@Override

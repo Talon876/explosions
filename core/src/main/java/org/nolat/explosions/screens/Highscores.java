@@ -177,7 +177,7 @@ public class Highscores implements Screen {
 				Player.class,
 				new StackMobQuery().fieldIsGreaterThan("levelsComplete", 5)
 						.fieldIsOrderedBy("levelsComplete", Ordering.DESCENDING)
-						.fieldIsOrderedBy("score", Ordering.DESCENDING).isInRange(0, NUMBER),
+						.fieldIsOrderedBy("score", Ordering.DESCENDING).isInRange(0, NUMBER - 1),
 				new StackMobQueryCallback<Player>() {
 					@Override
 					public void success(List<Player> result) {

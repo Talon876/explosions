@@ -40,7 +40,12 @@ public class Win implements Screen {
 			@Override
 			public boolean keyUp(int keycode) {
 				if (keycode == Keys.ENTER || keycode == Keys.ESCAPE) {
-					((Game) Gdx.app.getApplicationListener()).setScreen(new MainMenu());
+					stage.addAction(Actions.sequence(Actions.fadeOut(0.5f), Actions.run(new Runnable() {
+						@Override
+						public void run() {
+							((Game) Gdx.app.getApplicationListener()).setScreen(new MainMenu());
+						}
+					})));
 				}
 				return false;
 			}

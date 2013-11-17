@@ -95,7 +95,6 @@ public class LevelMenu implements Screen {
         Texture backgroundTexture = new Texture("backgrounds/title.png");
         Image background = new Image(backgroundTexture);
         background.setPosition(0, 0);
-        background.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         background.setFillParent(true);
         stage.addActor(background);
 

@@ -17,8 +17,8 @@ public class LevelInfo {
             info = LevelInfo.generateLevelInfo(i);
             tmp.add(info);
         }
-        //        tmp.reverse();
-        //always add 0th level
+        tmp.reverse();
+        // always add 0th level
         tmp.get(0).setLevel(0);
         levelData.put(0, tmp.get(0));
         int lvl = 1;

@@ -1,35 +1,51 @@
 apply plugin: "java"
-apply plugin: "application"
 
 sourceCompatibility = 1.7
-mainClassName = "org.nolat.explosions.DesktopLauncher"
-sourceSets.main.resources.srcDirs = [file("./assets").getAbsolutePath()]
-jar.archiveName = appName + '-' + version + '-desktop.jar'
+sourceSets.main.java.srcDirs = [ "src/" ]
 
-// idea doesn't like relative paths outside of content root...
-tasks.ideaModule.doFirst { 
-	println "huzzs"
-	sourceSets.main.resources.srcDirs = [] 
+project.ext.mainClassName = "org.nolat.explosions.desktop.DesktopLauncher"
+project.ext.assetsDir = new File("../android/assets");
+
+task run(dependsOn: classes, type: JavaExec) {
+    main = project.mainClassName
+    classpath = sourceSets.main.runtimeClasspath
+    standardInput = System.in
+    workingDir = project.assetsDir
+    ignoreExitValue = true
 }
 
-eclipse.project {
-    name = appName + "-desktop"
-}
-
-run {
-  ignoreExitValue = true
-}
-
-jar {
-    //make jar executable
+task dist(type: Jar) {
+    from files(sourceSets.main.output.classesDir)
+    from files(sourceSets.main.output.resourcesDir)
+    from {configurations.compile.collect {zipTree(it)}}
+    from files(project.assetsDir);
+ 
     manifest {
-        attributes ('Main-Class': 'org.nolat.explosions.DesktopLauncher',
+        attributes ('Main-Class': project.mainClassName,
                     'Application-Version': version,
                     'Built-By': System.getProperty("user.name"),
                     'Built-On': new Date().toString())
     }
-    //pack dependencies in to jar
-    from {
-        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } 
+
+    archiveName = appName + '-' + version + '-desktop.jar'
+}
+
+dist.dependsOn classes
+
+eclipse {
+    project {
+        name = appName + "-desktop"
+        linkedResource name: 'assets', type: '2', location: 'PARENT-1-PROJECT_LOC/android/assets'
     }
+}
+
+task afterEclipseImport(description: "Post processing after project generation", group: "IDE") {
+  doLast {
+    def classpath = new XmlParser().parse(file(".classpath"))
+    new Node(classpath, "classpathentry", [ kind: 'src', path: 'assets' ]);
+    def writer = new FileWriter(file(".classpath"))
+    def printer = new XmlNodePrinter(new PrintWriter(writer))
+    printer.setPreserveWhitespace(true)
+    printer.print(classpath)
+  }
 }

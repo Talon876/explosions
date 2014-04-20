@@ -1,34 +1,66 @@
-# OS generated files #
-######################
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
-dist
-log4j-custom.properties
+## Java
 
 *.class
-
-# Package Files #
 *.war
 *.ear
-*.iml
+hs_err_pid*
+
+## GWT
+war/
+war/gwt_bree/
+gwt-unitCache/
+.apt_generated/
+war/WEB-INF/deploy/
+war/WEB-INF/classes/
+.gwt/
+gwt-unitCache/
+www-test/
+.gwt-tmp/
+
+## Android Studio and Intellij and Android in general
+libs/armeabi/
+libs/armeabi-v7a/
+libs/x86/
+gen/
+.idea/
 *.ipr
 *.iws
-*.so
+*.iml
+out/
+com_crashlytics_export_strings.xml
+
+## Eclipse
 .classpath
 .project
-.settings/
-.gradle/
-.idea/
-build/
+.metadata
 bin/
-out/
-gen/
-project.properties
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
 local.properties
-android/
-android-2/
+.settings/
+.loadpath
+.externalToolBuilders/
+*.launch
+
+## NetBeans
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
+nbactions.xml
+nb-configuration.xml
+
+## Gradle
+
+.gradle
+build/
+
+project.properties
+
+
+dist
+log4j-custom.properties

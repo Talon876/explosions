@@ -6,7 +6,7 @@ before_install:
   - chmod +x gradlew
 
 script:
-  - "./gradlew clean dist"
+  - "./gradlew clean desktop:dist"
 
 env:
   global:
